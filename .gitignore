@@ -1,0 +1,26 @@
+# Generated competition workspace artifacts - especially NEVER commit raw survey PII
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
+*.key
+*.token
+*.pem
+*.p12
+raw_private/
+private/
+**/raw_private/
+**/private/
+state/
+tasks/
+**/state/
+**/tasks/
+*.zip
+
+# Local environments, logs, and platform metadata
+.venv/
+venv/
+*.log
+.DS_Store
+Thumbs.db

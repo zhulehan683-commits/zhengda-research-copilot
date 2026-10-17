@@ -1,0 +1,62 @@
+{
+  "competition": "zhengda-17",
+  "season": "2026-2027",
+  "display_name": "第十七届全国大学生市场调查与分析大赛（正大杯）",
+  "verification_status": "secondary-institutional-notices-only; verify national organizer notice and the user's own school/region before action",
+  "last_checked": "2026-10-17",
+  "organizer_website": "http://www.china-cssc.org/",
+  "notes": "本文件仅保存院校公告可核对的赛事基线，不包含学校报名代码、个人报名结果或最终实践赛提交格式。年份变化后不可自动沿用。",
+  "undergraduate_baseline": {
+    "individual_knowledge_exam": "2026-11-01 to 2026-11-20",
+    "mock_exam": "2026-10-20 to 2026-11-10 (subject to school notice)",
+    "general_registration_cutoff": "2026-10-31 (school deadlines may be earlier)",
+    "practice_contest_notice": "2026-11-17 (tentative from university notices)",
+    "team_size": "3-5 students, recheck relevant school/contest rules",
+    "sequence": [
+      "知识赛（适用组别的个人在线考试）",
+      "实践赛：校赛（通过知识赛且符合资格者）",
+      "企业命题赛（是否参与、选题和截止时间以当届通知为准）",
+      "省赛（依赛区规则和晋级结果）",
+      "全国总决赛（晋级团队）"
+    ]
+  },
+  "secondary_sources": [
+    {
+      "url": "https://jwc.cufe.edu.cn/info/1101/8225.htm",
+      "title": "中央财经大学教务处第十七届赛事通知",
+      "published_at": "2026-10-09",
+      "scope": "院校公告，可用于交叉核验赛程基线；不得套用该校报名代码"
+    },
+    {
+      "url": "https://xhem.cumt.edu.cn/a0/43/c18406a696387/page.htm",
+      "title": "中国矿业大学赛事通知",
+      "published_at": "2026-09-23",
+      "scope": "院校公告，可用于交叉核验；校内要求仅适用于该校"
+    },
+    {
+      "url": "https://www.qzc.edu.cn/2026/1013/c1216a85065/page.htm",
+      "title": "浙江赛区选拔赛通知",
+      "published_at": "2026-10-13",
+      "scope": "赛区/院校公告；报名截止时间与代码不可作为全国统一值"
+    },
+    {
+      "url": "https://www5.zzu.edu.cn/student/info/1003/13109.htm",
+      "title": "郑州大学参赛报名通知",
+      "published_at": "2026-10-14",
+      "scope": "院校公告，可用于交叉核验；校内要求仅适用于该校"
+    },
+    {
+      "url": "https://jwc.jxnu.edu.cn/Portal/ArticlesView.aspx?id=13757",
+      "title": "江西师范大学通知",
+      "published_at": "2026-09-30",
+      "scope": "院校公告；该校截止时间可能早于全国基线"
+    }
+  ],
+  "requires_local_verification": [
+    "学校及赛区的个人报名截止、院校代码、缴费要求",
+    "知识赛练习/考试规则与个人成绩",
+    "组队、导师、实践赛选题限制",
+    "实践赛报告格式、提交渠道、AI 使用披露、答辩要求"
+  ],
+  "scope_warning": "本配置是 2026-10-17 可核验的院校通知基线，不是适用于所有学校的完整官方规则；不得复制其他学校的院校代码、校内截止时间、缴费方式或群号。"
+}
