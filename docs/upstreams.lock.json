@@ -1,0 +1,105 @@
+{
+  "checked_on": "2026-10-17",
+  "sources": [
+    {
+      "repository": "DDXYY189/zhengdabei-survey-report-skill",
+      "commit": "449a58e64d15d263fcd9763df27d16f9ffc88ac9",
+      "license": "MIT",
+      "license_file": "licenses/zhengdabei-survey-report-skill/LICENSE",
+      "components": [
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/method-routing.md",
+          "source_sha256": "b9b8b4e89d9cb1e2694abb2339dc57028249ba2e95f335363011f0b5a0167eee",
+          "targets": [
+            "references/method-routing.md"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/text-analysis.md",
+          "source_sha256": "35cd4b7e435c0280f3b5e8bc02f97778a3a58002edcb7b9daa9f5a0226b31725",
+          "targets": [
+            "references/text-analysis.md"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/visualization-guide.md",
+          "source_sha256": "97673790786b7c17c0f732c6c04fbc173daa1080f55118b776fd77ea33496b18",
+          "targets": [
+            "references/visualization-guide.md"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/report-production.md",
+          "source_sha256": "d257b5a4a55bb96221d00fa4f0fb3998faede59403cc594bb7f556027bc07082",
+          "targets": [
+            "references/report-production.md"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/report-templates.md",
+          "source_sha256": "700b59a01270a083a9f07b18accf996943980f187d4f3d2e9b4195a4b9c4813d",
+          "targets": [
+            "templates/intake.md",
+            "templates/model-option-comparison.md",
+            "templates/result-matrix.csv",
+            "templates/figure-register.csv"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/references/quality-gates.md",
+          "source_sha256": "9a8b61add392af1e32fa5107247fd676abb5fab38d310f8e8cc6352bff54c65c",
+          "targets": [
+            "references/gates.md"
+          ]
+        },
+        {
+          "source_path": "skills/zhengdabei-survey-report/SKILL.md",
+          "source_sha256": "7f997eabcc16fea73a09cddc759f0f40e09c993ac1d7d584f06b34e6add970f5",
+          "targets": [
+            "SKILL.md"
+          ]
+        },
+        {
+          "source_path": "tests/pressure-scenarios.md",
+          "source_sha256": "cc4784e988c215839505a8911d35e8f98201ca72219219f3658d40c348d69a44",
+          "targets": [
+            "tests/pressure-scenarios.md"
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rootkiller6788/mathmodel-skill",
+      "commit": "a5f4d60c7db2a98e1284b1995a1aaaaa008facd5",
+      "license": "MIT",
+      "license_file": "licenses/mathmodel-skill/LICENSE",
+      "components": [
+        {
+          "source_path": "references/角色-阶段映射.md",
+          "source_sha256": "4238ab386859409bf3943236e54351c348bd6e301dcd5eff1a6033962b76f96c",
+          "targets": [
+            "references/roles-and-review.md"
+          ]
+        },
+        {
+          "source_path": "scripts/score_artifact.py",
+          "source_sha256": "9859ee7618c1f9b0adc93e12e5ca0249874341151e1990d5067ef6f72f14f542",
+          "targets": [
+            "scripts/score_review.py"
+          ]
+        }
+      ],
+      "reused_functions": [
+        "apply_dim_weights",
+        "summarize_scores"
+      ]
+    }
+  ],
+  "references_only": [
+    {
+      "repository": "MAS-32/conduct-market-research",
+      "commit": "b932488e6e48e268d9eaf99b33359b787943d4e1",
+      "reason": "No LICENSE found in checked snapshot; no files redistributed"
+    }
+  ]
+}

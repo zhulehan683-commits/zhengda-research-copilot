@@ -5,6 +5,11 @@
 ## Unreleased
 
 ### Added
+- 整合 mathmodel-skill 的三角色交付/独立复核提示词，并从 `score_artifact.py` 复用 `apply_dim_weights` 与 `summarize_scores`；新增只读七维汇总 CLI、字段校验和行为测试。
+- 保存上游固定提交、来源文件哈希和完整 MIT 声明；合并内容与外部引用分别登记。
+- 整合 MIT 许可上游 [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill) 的核心参考文档：方法路由（`references/method-routing.md`）、条件化文本分析（`references/text-analysis.md`）、可视化审计（`references/visualization-guide.md`）、长篇报告生产契约（`references/report-production.md`）。
+- 新增启动 Intake、建模方案比较、结果矩阵与图表登记表模板；新增 `tests/pressure-scenarios.md` 压力场景清单。
+- `SKILL.md` 增加 Intake 字段分级（阻塞/设计/优化）、建模方案固定格式与结论/建议句式规范；`references/gates.md` 增加七维评分自查。
 - 新增项目规格文档，统一项目目标、13 阶段范围、协作协议、真实性边界和验收标准。
 - 新增贡献指南、安全报告说明、第三方来源说明、许可证决策记录与发布检查清单。
 - 新增 GitHub Actions 测试工作流和 GitHub About 文案。
@@ -14,7 +19,8 @@
 - 完善 Windows 安装脚本：先复制到 staging 目录并验证必要文件，再替换旧安装；保留备份与失败恢复。
 - 将路径校验改为在解析路径前检查符号链接，避免 `resolve()` 掩盖链接路径。
 - 扩展任务队列验收条款和负责人校验的回归测试。
-- 更新第三方 Skill 路由：只作为可选参考，不假定已安装或自动调用。
+- 更新第三方 Skill 路由：许可明确的部分直接整合，其他项目保持可选参考，不假定已安装或自动调用。
+- 修正报告上游与竞赛总控的范围冲突：报名/知识赛/选题按阶段收集字段；PPT 与答辩纳入本项目范围；专业状态与脚本阶段状态明确区分。
 
 ### Known limitations
 - 未实现后台自动调度或真实 Hermes/Codex/DSH/Workbud 连接。

@@ -15,6 +15,10 @@
 - `data-dictionary.csv`：变量编码与数据类型；
 - `cleaning-report.md`：数据清洗决策与复现记录；
 - `analysis-plan.md`：统计方法、假设、诊断与稳健性计划；
+- `model-option-comparison.md`：比较候选方法的数据前提、诊断、失败条件和行动价值；
+- `result-matrix.csv`：逐研究问题记录结果、证据、限制与专业判断；
+- `figure-register.csv`：图表来源、样本量、正文插入位置和引用状态；
+- `review-rubric.json`：七维复核输入，填写后可由 `score_review.py` 汇总，不自动批准阶段；
 - `claim-evidence-matrix.csv`：结论与数据/代码/图表的绑定；
 - `report-qa-checklist.md`：报告内容、统计、真实性与规则检查；
 - `ai-usage-log.csv`：AI 使用与人工核验记录；

@@ -5,7 +5,7 @@
 *An Agent Skill for evidence-driven market research competitions.*
 
 ![Project status](https://img.shields.io/badge/status-preview-f59e0b)
-![Tests](https://img.shields.io/badge/CI-passing-16a34a?logo=github&logoColor=white)
+[![Tests](https://github.com/zhulehan683-commits/market-survey-competition/actions/workflows/tests.yml/badge.svg)](https://github.com/zhulehan683-commits/market-survey-competition/actions/workflows/tests.yml)
 ![Skill](https://img.shields.io/badge/Agent-Skill-334155)
 ![Competition](https://img.shields.io/badge/first%20preset-Zhengda%20Cup-0f766e)
 
@@ -39,7 +39,7 @@
 | **阶段质量门禁** | 检查必需证据、前序阶段状态，记录人工复核决定 |
 | **任务交接协议** | 任务创建、认领、提交、复核和本地事件记录 |
 | **方法论按需加载** | 研究设计、问卷质量、数据分析、报告与答辩参考文件 |
-| **外部 Skill 可选集成** | 可按任务参考市场调研、问卷分析和统计 Skill；需另行安装与验证 |
+| **上游能力整合** | 内置报告方法、图表契约、角色复核提示词及评分汇总代码；其他 Skill 仍可按需选用 |
 | **赛制配置** | 内置第十七届正大杯规则基线；当届官方及本校通知始终优先 |
 
 ### 十三阶段地图
@@ -74,7 +74,7 @@ cd market-survey-competition
 
 该脚本在目标目录已存在时默认拒绝覆盖；需要替换旧版本时，检查变更后使用 `-Force`，安装脚本会先备份旧目录。其他支持 `SKILL.md` 的 Agent 环境可按自身文档，将整个文件夹放进对应的 Skills 目录。**不要只复制 `SKILL.md`**。
 
-从 Git 仓库安装时会按完整目录复制，包括 `.git`、文档和测试文件。对大多数 Agent 环境这不影响启动；如果你希望安装包保持最小化，请使用正式 ZIP 发行包或自行清理安装副本。当前安装脚本会保留这些文件，以避免误删发布或审计材料。
+从 Git 仓库安装时会按完整目录复制，包括 `.git`、文档和测试文件。对大多数 Agent 环境这不影响启动；如果你希望安装包保持最小化，请使用经检查的 ZIP 副本或自行清理安装副本。当前安装脚本会保留这些文件，以避免误删发布或审计材料。
 
 ### 2. 在 Codex 中启动
 
@@ -139,26 +139,41 @@ python scripts/workflow.py review --project $project --stage registration --revi
 
 详细参数见 `python scripts/workflow.py --help`。
 
+## 已整合的能力
+
+| 来源 | 已整合进本项目 | 使用入口 |
+| --- | --- | --- |
+| 正大杯报告 Skill | 方法路由、条件化文本分析、图表审计、完整报告交付契约与模板 | 按任务加载下方参考资料 |
+| mathmodel-skill | 三角色分工、交付物边界复核、权重与分数汇总函数 | [角色与复核](references/roles-and-review.md)、`scripts/score_review.py` |
+| 本项目补充 | 13 阶段竞赛流程、证据失效、任务交接、项目自定义要求及市场研究模块 | [Skill 入口](SKILL.md)、[市场研究](references/market-research.md) |
+
+这些模块随项目安装提供，共用 `state/project.json`；无需另外安装前两个上游 Skill。完整许可和固定版本见 [第三方说明](THIRD_PARTY_NOTICES.md)。
+
 ## 参考文件导航
 
 按需阅读，不必全部读完再用 Skill：
 
 | 想解决什么问题 | 先看哪份资料 |
 | --- | --- |
-| 各阶段定义、必需证据与退出条件 | `references/stages.md` |
-| 阶段门禁规则与 BLOCKED 原因 | `references/gates.md` |
-| 研究设计、文献综述与二手材料 | `references/research-design.md` |
-| 问卷、抽样与测量质量 | `references/survey-quality.md` |
-| 统计分析与结果解释 | `references/analysis.md` |
-| 报告写作、图表与答辩准备 | `references/report-defense.md` |
-| AI 与其他 Agent 的协作边界 | `references/agents.md` |
-| 第三方 Skill 集成方法 | `references/integrations.md` |
+| 各阶段定义、必需证据与退出条件 | [references/stages.md](references/stages.md) |
+| 阶段门禁规则与 BLOCKED 原因 | [references/gates.md](references/gates.md) |
+| 研究设计、文献综述与二手材料 | [references/research-design.md](references/research-design.md) 与 [references/market-research.md](references/market-research.md) |
+| 问卷、抽样与测量质量 | [references/survey-quality.md](references/survey-quality.md) |
+| 统计分析与结果解释 | [references/analysis.md](references/analysis.md) 与 [references/method-routing.md](references/method-routing.md)（方法路由与失败降级） |
+| 文本分析与词云（条件能力） | [references/text-analysis.md](references/text-analysis.md) |
+| 图表选择与可视化审计 | [references/visualization-guide.md](references/visualization-guide.md) |
+| 报告篇幅预算与图表交付契约 | [references/report-production.md](references/report-production.md) |
+| 报告写作与答辩准备 | [references/report-defense.md](references/report-defense.md) |
+| 角色分工、交付物复核与 Agent 协作 | [references/roles-and-review.md](references/roles-and-review.md) 与 [references/agents.md](references/agents.md) |
+| 第三方 Skill 集成与已合并上游说明 | [references/integrations.md](references/integrations.md) |
+
+其中方法路由、文本分析、可视化审计、报告生产、Intake/方案模板与压力场景整合自 MIT 许可的 [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)，署名与文件清单见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 失败恢复与常见陷阱
 
 ### 证据丢失或哈希失效
 
-`workflow.py status` 或 `gate` 提示 `MISSING` / `HASH_MISMATCH` 时：
+`workflow.py status` 显示 `STALE` / `STALE_UPSTREAM`，或 `gate` 的 `reasons` 提示证据缺失、文件被改动时：
 
 1. 打开 `state/project.json`，看缺失或失效的证据键。
 2. 重新提供原始文件并用 `evidence add` 重登记；新哈希会覆盖旧记录。
@@ -166,7 +181,7 @@ python scripts/workflow.py review --project $project --stage registration --revi
 
 ### 阶段被 BLOCKED
 
-- 先看 `state/project.json` 里该阶段的 `blocked_reasons`。
+- 运行 `python scripts/workflow.py gate --project $project --stage <阶段>`，查看 JSON 的 `reasons`；该命令阻塞时退出码为 3。`status` 成功读取状态时退出码为 0，不能据此判断阶段已通过。
 - 补齐必需证据后重新 `gate`。
 - `review` 只在真实人工核对后使用；如果不清楚缺什么，回到 `references/stages.md`。
 
@@ -174,7 +189,7 @@ python scripts/workflow.py review --project $project --stage registration --revi
 
 - 在会话中明确要求："当前没有真实数据，不要生成参赛结论；给出数据收集计划和模板。"
 - 检查它是否用了 `state/project.json` 里登记过的证据；未登记引用的数字不能作为结论。
-- 如果它声称"文件检查通过"，亲自核对对应文件是否存在、内容是否与 `evidence` 登记 一致。
+- 如果它声称"文件检查通过"，亲自核对对应文件是否存在、内容是否与 `evidence` 登记一致。
 
 ### 下载的赛程与仓库不一致
 
@@ -237,9 +252,11 @@ python scripts/workflow.py --help
 python scripts/task_queue.py --help
 ```
 
+七维复核可填写 `templates/review-rubric.json` 后运行 `python scripts/score_review.py <review.json>`；空模板不能作为有效复核输入。该工具只输出摘要与建议，不批准阶段。
+
 自动测试覆盖状态管理、证据变更、阶段门禁及任务交接的若干情景，**不是对调查方法科学性、真实赛事合规或外部 Agent 实际运行的认证**。
 
-2026-10-17 本地实测：Windows 11 + Python 3.12.3 下，两个安装目录均通过 `unittest discover`，共 19 项测试（其中 1 项 symlink 用例在本机权限下跳过）。`workflow.py init/status/evidence/gate/review` 与两个 CLI 在真实独立工作区完成冒烟验证，证据 SHA-256 与实际文件哈希一致。GitHub Actions `Tests` 工作流在当前 `main` 分支为通过，Python 3.10—3.13 矩阵见 [.github/workflows/tests.yml](.github/workflows/tests.yml)。
+2026-10-17 本地实测：Windows 11 + Python 3.12.3 下，两个安装目录均通过 `unittest discover`，共 19 项测试（其中 1 项 symlink 用例在本机权限下跳过）。`workflow.py init/status/evidence/gate/review` 与两个 CLI 在真实独立工作区完成冒烟验证，证据 SHA-256 与实际文件哈希一致。首次 GitHub Actions `Tests` 验证已通过（历史记录，当前状态以顶部动态徽章为准），Python 3.10—3.13 矩阵见 [.github/workflows/tests.yml](.github/workflows/tests.yml)。
 
 ## 设计原则与限制
 
@@ -247,13 +264,13 @@ python scripts/task_queue.py --help
 2. **当届规则优先**：仓库中的赛程仅为基线，个人报名、组队、校赛及提交要求必须以当届官方与本校通知为准。
 3. **最小必要权限**：不代考、不代报名、不代替团队收集问卷；外部 AI 工具仅处理获准使用且已脱敏的数据。
 4. **审查不能由脚本冒充**：本地审核记录只是留痕，无法技术性证明 reviewer 的真实身份、独立性和研究质量。
-5. **组合而非捆绑**：本仓库不打包第三方市场调研 Skill；可选来源与使用边界见 [集成参考](references/integrations.md)。
+5. **有来源的整合**：合并模块保留来源、固定提交与完整许可，按本项目阶段适配；其余外部 Skill 按需使用，见 [集成参考](references/integrations.md)。
 
 ## 后续路线
 
 - [ ] 由项目所有者确认许可证并添加标准 `LICENSE` 文件。
 - [x] 在真实 Windows PowerShell 环境中验证安装脚本（2026-10-17）。
-- [x] 在本地 Windows + Python 3.12 环境运行测试与 CLI（2026-10-17，19 项测试通过，1 项 symlink 用例因权限跳过）。
+- [x] 在本地 Windows + Python 3.12 环境运行测试与 CLI（2026-10-17，19 项测试中 18 项通过、1 项 symlink 用例因权限跳过）。
 - [x] 通过 GitHub Actions `Tests` 工作流验证 Python 3.10—3.13（最新 main 分支）。
 - [x] 完成进入 Skill 根目录的 ZIP 解压验证（2026-10-17）。
 - [ ] 扩展新的竞赛年份与其他市场调查赛事配置。
@@ -264,7 +281,7 @@ python scripts/task_queue.py --help
 
 ## 参考、开源发布与贡献
 
-本项目的工作流思路参考了 [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill)、[正大杯调查报告 Skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)、[Conduct Market Research](https://github.com/MAS-32/conduct-market-research)、问卷设计与统计分析相关 Skill。当前发行包仅保留链接与方法路由，**不打包这些项目的代码、Skill 文本或数据**。完整来源列表与复用规则见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [集成参考](references/integrations.md)。
+本项目的工作流思路参考了 [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill)、[正大杯调查报告 Skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)、[Conduct Market Research](https://github.com/MAS-32/conduct-market-research)、问卷设计与统计分析相关 Skill。本次已合并前两个 MIT 来源的部分文档、提示词、模板和评分代码；`conduct-market-research` 的核验快照未见 LICENSE，保留链接，本项目市场研究模块独立编写。完整来源列表与复用规则见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [集成参考](references/integrations.md)。
 
 - [项目规格与验收标准](docs/PROJECT_SPEC.md)
 - [GitHub About 简介与 Topics](docs/GITHUB_ABOUT.md)
