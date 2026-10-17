@@ -49,3 +49,7 @@
 ## 结果到行动
 
 采用“词云发现 → 定量/定性验证 → 分群或情感差异 → 具体动作”的链条。词云不应单独占据模型章节，也不应作为唯一创新点。
+
+---
+
+来源声明：本文档整合自 MIT 许可的 [DDXYY189/zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)（Copyright (c) 2026 DDXYY189），经适配性编辑后并入本仓库。

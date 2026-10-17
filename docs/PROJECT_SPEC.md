@@ -80,7 +80,7 @@
 
 ## 7. 可选外部 Skill
 
-外部 Skill 只作为按需参考，不随本仓库自动安装，也不保证在运行环境中可发现。主控应先检查是否已安装、当前说明和许可证；若不可用，则按本项目工作流完成任务，不得声称已调用。
+本项目已从许可明确的上游合并方法文档、模板、角色提示词及评分汇总函数；具体文件、固定版本和完整许可证见 `THIRD_PARTY_NOTICES.md`、`docs/upstreams.lock.json` 与 `licenses/`。这些能力随项目提供。其余外部 Skill 按需参考，不自动安装；主控应检查是否已安装、说明和许可，不可用则用内置流程继续，不得声称已调用。项目权威状态始终为 `state/project.json`，不叠加上游竞赛的另一套状态机。
 
 路由详见 [`../references/integrations.md`](../references/integrations.md)。
 

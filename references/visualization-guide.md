@@ -43,3 +43,7 @@
 是否存在误导性坐标、颜色或排序？
 正文是否解释了图，而不是只贴图？
 ```
+
+---
+
+来源声明：本文档整合自 MIT 许可的 [DDXYY189/zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)（Copyright (c) 2026 DDXYY189），经适配性编辑后并入本仓库。
