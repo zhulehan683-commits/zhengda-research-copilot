@@ -4,7 +4,10 @@
 
 *An Agent Skill for evidence-driven market research competitions.*
 
-![Project status](https://img.shields.io/badge/status-preview-f59e0b) ![Skill](https://img.shields.io/badge/Agent-Skill-334155) ![Competition](https://img.shields.io/badge/first%20preset-Zhengda%20Cup-0f766e)
+![Project status](https://img.shields.io/badge/status-preview-f59e0b)
+![Tests](https://img.shields.io/badge/CI-passing-16a34a?logo=github&logoColor=white)
+![Skill](https://img.shields.io/badge/Agent-Skill-334155)
+![Competition](https://img.shields.io/badge/first%20preset-Zhengda%20Cup-0f766e)
 
 `market-survey-competition` 是面向大学生市场调查与分析竞赛的 **Agent 工作流 Skill**。它以**第十七届正大杯（2026—2027）**为首个赛事配置，将知识赛准备、选题、问卷与抽样、真实调查、统计建模、研究报告和答辩串成一条可记录、可复核、可交接的工作链。
 
@@ -55,9 +58,11 @@
 
 ### 1. 安装 Skill
 
-目前可以从本项目 ZIP 包安装。在 Windows 上，将压缩包解压后，进入其中的 `market-survey-competition` 文件夹，先查看 `install.ps1`，再运行：
+在 Windows 上，将仓库克隆或打包 ZIP 解压后，进入其中的 `market-survey-competition` 文件夹，先查看 `install.ps1`，再运行：
 
 ```powershell
+git clone https://github.com/zhulehan683-commits/market-survey-competition.git
+cd market-survey-competition
 .\install.ps1
 ```
 
@@ -69,13 +74,7 @@
 
 该脚本在目标目录已存在时默认拒绝覆盖；需要替换旧版本时，检查变更后使用 `-Force`，安装脚本会先备份旧目录。其他支持 `SKILL.md` 的 Agent 环境可按自身文档，将整个文件夹放进对应的 Skills 目录。**不要只复制 `SKILL.md`**。
 
-获得 GitHub 仓库访问权限后，也可以克隆仓库安装：
-
-```powershell
-git clone https://github.com/zhulehan683-commits/market-survey-competition.git
-cd market-survey-competition
-.\install.ps1
-```
+从 Git 仓库安装时会按完整目录复制，包括 `.git`、文档和测试文件。对大多数 Agent 环境这不影响启动；如果你希望安装包保持最小化，请使用正式 ZIP 发行包或自行清理安装副本。当前安装脚本会保留这些文件，以避免误删发布或审计材料。
 
 ### 2. 在 Codex 中启动
 
@@ -172,6 +171,8 @@ python scripts/task_queue.py --help
 
 自动测试覆盖状态管理、证据变更、阶段门禁及任务交接的若干情景，**不是对调查方法科学性、真实赛事合规或外部 Agent 实际运行的认证**。
 
+2026-10-17 本地实测：Windows 11 + Python 3.12.3 下，两个安装目录均通过 `unittest discover`，共 19 项测试（其中 1 项 symlink 用例在本机权限下跳过）。`workflow.py init/status/evidence/gate/review` 与两个 CLI 在真实独立工作区完成冒烟验证，证据 SHA-256 与实际文件哈希一致。GitHub Actions `Tests` 工作流在当前 `main` 分支为通过，Python 3.10—3.13 矩阵见 [.github/workflows/tests.yml](.github/workflows/tests.yml)。
+
 ## 设计原则与限制
 
 1. **真实性优先**：不伪造问卷、访谈、回收率、显著性、引用或获奖结果。模拟数据必须明确标注，不进入参赛报告作为真实证据。
@@ -183,7 +184,10 @@ python scripts/task_queue.py --help
 ## 后续路线
 
 - [ ] 由项目所有者确认许可证并添加标准 `LICENSE` 文件。
-- [x] 在真实 Windows PowerShell 环境中验证安装脚本（2026-10-17，新目录安装及 50 个文件哈希核对通过）。
+- [x] 在真实 Windows PowerShell 环境中验证安装脚本（2026-10-17）。
+- [x] 在本地 Windows + Python 3.12 环境运行测试与 CLI（2026-10-17，19 项测试通过，1 项 symlink 用例因权限跳过）。
+- [x] 通过 GitHub Actions `Tests` 工作流验证 Python 3.10—3.13（最新 main 分支）。
+- [x] 完成进入 Skill 根目录的 ZIP 解压验证（2026-10-17）。
 - [ ] 扩展新的竞赛年份与其他市场调查赛事配置。
 - [ ] 在 Codex / Claude Code 中做端到端回归测试。
 - [ ] 接入真实多 Agent 编排器，验证派发—认领—执行—复核—状态更新的完整日志链。
