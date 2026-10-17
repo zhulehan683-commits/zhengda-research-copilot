@@ -11,7 +11,7 @@
 
 `market-survey-competition` 是面向大学生市场调查与分析竞赛的 **Agent 工作流 Skill**。它以**第十七届正大杯（2026—2027）**为首个赛事配置，将知识赛准备、选题、问卷与抽样、真实调查、统计建模、研究报告和答辩串成一条可记录、可复核、可交接的工作链。
 
-它不是“一键生成获奖论文”的工具。我们希望解决的是一个更实际的问题：**当研究跨越多周、多名队员与多个 AI Agent 时，如何确保问题、数据、结论和交付物始终对应？**
+它不是"一键生成获奖论文"的工具。我们希望解决的是一个更实际的问题：**当研究跨越多周、多名队员与多个 AI Agent 时，如何确保问题、数据、结论和交付物始终对应？**
 
 > **项目状态：Preview（可安装初版）**
 >
@@ -25,7 +25,7 @@
 
 - **不丢上下文**：将阶段进度和证据索引写入项目目录，而非只放在聊天记录里。
 - **不让数字凭空出现**：结论必须关联真实来源、数据、代码或可核验的文献。
-- **不把“生成了”当“完成了”**：文件检查、科学性审查和竞赛合规各司其职。
+- **不把"生成了"当"完成了"**：文件检查、科学性审查和竞赛合规各司其职。
 - **不怕中途返工**：上游证据变化后，阻止沿用失效的下游验收结果。
 - **不把多 Agent 说成魔法**：只有实际执行、提交、验收和更新都留下证据，才称得上协作闭环。
 
@@ -90,6 +90,18 @@ cd market-survey-competition
 不要生成虚构的调查结果，也不要修改我的其他 Agent 配置。
 ```
 
+首次使用时，建议至少提供以下信息，便于 Skill 判断当前阶段和缺失材料：
+
+| 字段 | 说明 | 示例 |
+| --- | --- | --- |
+| 赛事与组别 | 当届名称、组别、赛区 | 第十七届正大杯本科组 |
+| 当前阶段 | 13 阶段中的位置 | 只确定了方向，尚未问卷 |
+| 选题/研究对象 | 具体人群、地域、时间范围 | 武汉在校大学生消费习惯 |
+| 已有材料 | 已有的通知、文献、问卷或数据 | 学院报名通知 PDF |
+| 本轮目标 | 你希望本次会话交付什么 | 选题评分与研究计划 |
+
+字段缺失不影响启动，但 Skill 会先列出还需要哪些证据，而不是跳过检查直接生成内容。
+
 ### 3. 初始化独立的竞赛工作区（可选手动操作）
 
 本地脚本使用 Python 标准库，无需先安装额外 Python 包；建议使用 Python 3.10 或更新版本。进入 **Skill 根目录** 后，建议把研究工作区放在文档/竞赛目录中，而不是嵌套在 Skill 安装目录里：
@@ -111,6 +123,62 @@ python scripts/workflow.py review --project $project --stage registration --revi
 ```
 
 上例假定你**已经自行放入**真实的通知 PDF；它不是随项目提供的文件。`gate` 仅执行机械检查，正式放行还需要合格证据和独立复核记录。
+
+## 常用命令速查
+
+以下命令都在 Skill 根目录运行，假设 `$project` 已按上面初始化：
+
+| 需求 | 命令 |
+| --- | --- |
+| 查看阶段状态 | `python scripts/workflow.py status --project $project` |
+| 登记证据 | `python scripts/workflow.py evidence add --project $project --stage <阶段> --key <键名> --file <文件> --author <作者>` |
+| 机械检查阶段 | `python scripts/workflow.py gate --project $project --stage <阶段>` |
+| 记录人工复核结果 | `python scripts/workflow.py review --project $project --stage <阶段> --reviewer <人> --decision pass\|fail --note <说明>` |
+| 查看可选集成 | 阅读 `references/integrations.md`（本地文件） |
+| 看阶段定义 | 阅读 `references/stages.md`（本地文件） |
+
+详细参数见 `python scripts/workflow.py --help`。
+
+## 参考文件导航
+
+按需阅读，不必全部读完再用 Skill：
+
+| 想解决什么问题 | 先看哪份资料 |
+| --- | --- |
+| 各阶段定义、必需证据与退出条件 | `references/stages.md` |
+| 阶段门禁规则与 BLOCKED 原因 | `references/gates.md` |
+| 研究设计、文献综述与二手材料 | `references/research-design.md` |
+| 问卷、抽样与测量质量 | `references/survey-quality.md` |
+| 统计分析与结果解释 | `references/analysis.md` |
+| 报告写作、图表与答辩准备 | `references/report-defense.md` |
+| AI 与其他 Agent 的协作边界 | `references/agents.md` |
+| 第三方 Skill 集成方法 | `references/integrations.md` |
+
+## 失败恢复与常见陷阱
+
+### 证据丢失或哈希失效
+
+`workflow.py status` 或 `gate` 提示 `MISSING` / `HASH_MISMATCH` 时：
+
+1. 打开 `state/project.json`，看缺失或失效的证据键。
+2. 重新提供原始文件并用 `evidence add` 重登记；新哈希会覆盖旧记录。
+3. 重新运行 `gate`；通过后走独立复核。
+
+### 阶段被 BLOCKED
+
+- 先看 `state/project.json` 里该阶段的 `blocked_reasons`。
+- 补齐必需证据后重新 `gate`。
+- `review` 只在真实人工核对后使用；如果不清楚缺什么，回到 `references/stages.md`。
+
+### Agent 生成了虚构数据或未经验证的数字
+
+- 在会话中明确要求："当前没有真实数据，不要生成参赛结论；给出数据收集计划和模板。"
+- 检查它是否用了 `state/project.json` 里登记过的证据；未登记引用的数字不能作为结论。
+- 如果它声称"文件检查通过"，亲自核对对应文件是否存在、内容是否与 `evidence` 登记 一致。
+
+### 下载的赛程与仓库不一致
+
+仓库中的赛制是基线快照，不是实时来源。当届正式通知、校赛安排、提交模板永远优先。发现差异时，以官方/学校通知为准更新自己的工作区文件，并在 `source_register` 里登记来源和核对日期。
 
 ## 工作方式
 
