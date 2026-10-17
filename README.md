@@ -224,24 +224,24 @@ python scripts/workflow.py review --project $project --stage registration --revi
 market-survey-competition/
 ├── SKILL.md                     # Agent 入口与行为边界
 ├── competitions/zhengda-17/     # 第十七届正大杯赛制基线
-├── references/                 # 阶段、门禁、方法和协作参考
+├── references/                  # 阶段、门禁、方法和协作参考
 ├── scripts/
-│   ├── workflow.py             # 项目状态、证据及阶段审核
-│   ├── task_queue.py           # 本地任务交接
-│   ├── score_review.py         # 七维复核输入汇总
-│   └── common.py               # 共用工具
-├── templates/                  # 知识赛、组队、选题、问卷、抽样、数据、分析、报告、答辩模板
-├── tests/                      # 自动化测试
-├── docs/                       # 项目规格、发布清单、验证记录、GitHub About 与发布提示词
-├── licenses/                   # 上游许可档案
-├── .github/workflows/          # GitHub Actions 测试工作流
-├── install.ps1                 # Windows 安装脚本
-├── CODEX_START.md              # Codex 启动提示词
-├── CHANGELOG.md                # 变更记录
-├── CONTRIBUTING.md             # 贡献规范
-├── SECURITY.md                 # 安全与隐私说明
-├── THIRD_PARTY_NOTICES.md      # 第三方来源与许可注意事项
-└── LICENSE-DECISION.md         # 许可证待确认记录（不是许可证）
+│   ├── workflow.py              # 项目状态、证据及阶段审核
+│   ├── task_queue.py            # 本地任务交接
+│   ├── score_review.py          # 七维复核输入汇总
+│   └── common.py                # 共用工具
+├── templates/                   # 知识赛、组队、选题、问卷、抽样、数据、分析、报告、答辩模板
+├── tests/                       # 自动化测试
+├── docs/                        # 项目规格、发布清单、验证记录、GitHub About 与发布提示词
+├── licenses/                    # 上游许可档案
+├── .github/workflows/           # GitHub Actions 测试工作流
+├── install.ps1                  # Windows 安装脚本
+├── CODEX_START.md               # Codex 启动提示词
+├── CHANGELOG.md                 # 变更记录
+├── CONTRIBUTING.md              # 贡献规范
+├── SECURITY.md                  # 安全与隐私说明
+├── THIRD_PARTY_NOTICES.md       # 第三方来源与许可注意事项
+└── LICENSE-DECISION.md          # 许可证待确认记录（不是许可证）
 ```
 
 初始化后的 **参赛工作区与 Skill 安装目录分离**，包含 `sources/`、`raw_private/`、`data/`、`analysis/`、`report/`、`defense/`、`state/` 和 `tasks/` 等目录。原始受访者信息应留在私有工作区，不要上传到公共仓库。
@@ -275,7 +275,7 @@ python scripts/score_review.py --help
 
 - [ ] 由项目所有者确认许可证并添加标准 `LICENSE` 文件。
 - [x] 在真实 Windows PowerShell 环境中验证安装脚本（2026-10-17）。
-- [x] 在本地 Windows + Python 3.12 环境运行测试与 CLI（2026-10-17，19 项测试中 18 项通过、1 项 symlink 用例因权限跳过）。
+- [x] 在本地 Windows + Python 3.12 环境运行测试与 CLI（2026-10-17，27 项测试中 26 项通过、1 项 symlink 用例因权限跳过）。
 - [x] 通过 GitHub Actions `Tests` 工作流验证 Python 3.10—3.13（最新 main 分支）。
 - [x] 完成进入 Skill 根目录的 ZIP 解压验证（2026-10-17）。
 - [ ] 扩展新的竞赛年份与其他市场调查赛事配置。
