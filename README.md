@@ -15,7 +15,7 @@
 
 > **项目状态：Preview（可安装初版）**
 >
-> 已提供 Skill 入口、13 阶段规范、项目状态管理、SHA-256 证据登记、本地任务交接和测试脚本。**尚未实现自动调用其他 Agent 的运行时调度器**，也没有验证完整真实参赛项目的端到端无人值守执行。项目非正大杯主办方官方产品。
+> 当前版本已整合 13 阶段规范、SHA-256 证据登记、本地任务交接、方法路由、文本/图表审计、报告生产契约、角色复核与七维评分，并通过 27 项自动化测试中的 26 项（1 项因 Windows symlink 权限跳过）。**尚未实现自动调用其他 Agent 的运行时调度器**，也没有验证完整真实参赛项目的端到端无人值守执行。项目非正大杯主办方官方产品。
 
 ## 为什么需要它？
 
@@ -37,9 +37,11 @@
 | **项目状态持久化** | `state/project.json` 记录各阶段状态，支持跨会话继续 |
 | **证据与变更跟踪** | 登记本地文件及 SHA-256；检测证据过期和上游变更 |
 | **阶段质量门禁** | 检查必需证据、前序阶段状态，记录人工复核决定 |
+| **方法路由与降级** | 按研究问题选择描述、比较、回归、测量、聚类、文本、IPA 等方法，并定义失败条件 |
+| **文本分析与可视化** | 条件化文本分析、词云审计、图表选择与可视化质量门禁 |
+| **报告生产与答辩** | 篇幅预算、图表交付契约、正文证据绑定、答辩问题库 |
 | **任务交接协议** | 任务创建、认领、提交、复核和本地事件记录 |
-| **方法论按需加载** | 研究设计、问卷质量、数据分析、报告与答辩参考文件 |
-| **上游能力整合** | 内置报告方法、图表契约、角色复核提示词及评分汇总代码；其他 Skill 仍可按需选用 |
+| **角色复核与评分** | 三角色交付边界、五类检查点、七维评分汇总 CLI |
 | **赛制配置** | 内置第十七届正大杯规则基线；当届官方及本校通知始终优先 |
 
 ### 十三阶段地图
@@ -226,10 +228,12 @@ market-survey-competition/
 ├── scripts/
 │   ├── workflow.py             # 项目状态、证据及阶段审核
 │   ├── task_queue.py           # 本地任务交接
+│   ├── score_review.py         # 七维复核输入汇总
 │   └── common.py               # 共用工具
 ├── templates/                  # 知识赛、组队、选题、问卷、抽样、数据、分析、报告、答辩模板
 ├── tests/                      # 自动化测试
-├── docs/                       # 项目规格、发布清单、GitHub About 与 Codex 发布提示词
+├── docs/                       # 项目规格、发布清单、验证记录、GitHub About 与发布提示词
+├── licenses/                   # 上游许可档案
 ├── .github/workflows/          # GitHub Actions 测试工作流
 ├── install.ps1                 # Windows 安装脚本
 ├── CODEX_START.md              # Codex 启动提示词
@@ -250,13 +254,14 @@ market-survey-competition/
 python -m unittest discover -s tests -p "test_*.py" -v
 python scripts/workflow.py --help
 python scripts/task_queue.py --help
+python scripts/score_review.py --help
 ```
 
 七维复核可填写 `templates/review-rubric.json` 后运行 `python scripts/score_review.py <review.json>`；空模板不能作为有效复核输入。该工具只输出摘要与建议，不批准阶段。
 
 自动测试覆盖状态管理、证据变更、阶段门禁及任务交接的若干情景，**不是对调查方法科学性、真实赛事合规或外部 Agent 实际运行的认证**。
 
-2026-10-17 本地实测：Windows 11 + Python 3.12.3 下，两个安装目录均通过 `unittest discover`，共 19 项测试（其中 1 项 symlink 用例在本机权限下跳过）。`workflow.py init/status/evidence/gate/review` 与两个 CLI 在真实独立工作区完成冒烟验证，证据 SHA-256 与实际文件哈希一致。首次 GitHub Actions `Tests` 验证已通过（历史记录，当前状态以顶部动态徽章为准），Python 3.10—3.13 矩阵见 [.github/workflows/tests.yml](.github/workflows/tests.yml)。
+2026-10-17 本地实测：Windows 11 + Python 3.12.3 下，27 项测试中 26 项通过、1 项 symlink 用例因本机权限跳过。`workflow.py init/status/evidence/gate/review`、`task_queue.py` 和 `score_review.py` 在真实独立工作区完成冒烟验证，证据 SHA-256 与实际文件哈希一致。首次 GitHub Actions `Tests` 验证已通过（历史记录，当前状态以顶部动态徽章为准），Python 3.10—3.13 矩阵见 [.github/workflows/tests.yml](.github/workflows/tests.yml)。
 
 ## 设计原则与限制
 
