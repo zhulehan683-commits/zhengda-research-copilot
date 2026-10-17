@@ -12,7 +12,11 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 1. 先读取 `references/stages.md` 与 `references/gates.md`；需要跨 Agent 交接时读取 `references/agents.md`，需要市场/问卷/统计方法时再按任务读取专题文件。不要把整份 README 当作每次启动必读上下文。
 2. 检查当前工作目录是否已有 `state/project.json`，有则读已有状态并接续，**不要重置**。没有则运行：
    `python <SKILL_ROOT>/scripts/workflow.py init --project <PROJECT_ROOT> --competition zhengda-17 --season 2026-2027`
-3. 项目字段：组别、学校及赛区、学校通知/官方规则、个人报名与知识赛状态、团队、选题、研究总体、研究地区、截止时间。已知的不再问；未知的仅标注待核验，不编造。提供适合当前阶段的下一项实质工作。
+3. 按 `templates/intake.md` 建立 Intake。字段分级：
+   - **阻塞字段**：选题、研究对象、当前阶段。缺失时只提问，不生成正式报告；
+   - **设计字段**：地域、样本计划、数据来源、比赛规则。缺失时可给条件化方案，但必须标注假设；
+   - **优化字段**：软件偏好、版式偏好、团队分工。缺失时采用默认值并说明。
+   已知的不再问；未知的仅标注待核验，不编造。提供适合当前阶段的下一项实质工作。
 4. 2026–2027 的日期只是有来源的赛程**基线**，永远以当届组织方和本校/赛区最新公告为准；不得代填学校报名代码、承诺晋级或把他校校赛时间当作本人校赛时间。
 
 ## 十三阶段（不跨越证据门禁）
@@ -28,9 +32,17 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 - 选题与二手资料 → `references/research-design.md`，需要时调用 `conduct-market-research`；引用原始出处，区分事实/推论。
 - 问卷/抽样 → `references/survey-quality.md`；可选调用 `survey-design`、`zhengdabei-survey-report`，但先统一变量和样本定义。
-- 清洗、统计建模、复现 → `references/analysis.md`；可选调用 `survey-research`、`questionnaire-analysis`、`statistical-analysis`。仅使用已安装且可发现的外部 Skill；没安装就按本流程独立工作，不捏造能力。
-- 报告与答辩 → `references/report-defense.md`；报告引用真实计算结果，演示材料来自已核查报告。
+- 清洗、统计建模、复现 → `references/analysis.md` 与 `references/method-routing.md`（方法路由、最小输入与失败降级）；可选调用 `survey-research`、`questionnaire-analysis`、`statistical-analysis`。仅使用已安装且可发现的外部 Skill；没安装就按本流程独立工作，不捏造能力。
+- 文本分析 → `references/text-analysis.md`。**条件能力**：只在存在真实、相关、可追溯且合规的文本时启用；只有结构化问卷时不做词云，词云只是高频词入口图，不能单独作为需求、情绪或因果结论。
+- 图表 → `references/visualization-guide.md`；每张图必须有图号、标题、来源、样本量、单位、图后解释与对应研究问题。
+- 报告与答辩 → `references/report-defense.md` 与 `references/report-production.md`（篇幅预算、图表交付契约）；报告引用真实计算结果，演示材料来自已核查报告。每个核心研究问题至少绑定一张可追溯的表或图。
 - 竞赛规则/学术诚信/数据隐私 → `references/gates.md`；一切冲突由当届官方规则优先裁决。
+
+## 建模方案固定格式
+
+给出建模方案时使用 `templates/model-option-comparison.md` 的固定格式：方案名称、研究问题、因变量与自变量、数据形态、样本前提、分析步骤、诊断与稳健性、失败条件与降级方案、结果到行动、推荐等级。优先推荐"最小可行主方案 + 一个验证方案"。
+
+结论使用 `研究问题 + 数据/表图 + 结果 + 限制`；建议使用 `证据 → 责任主体 → 具体动作 → 资源/前提 → 时间 → 衡量指标`。禁止"加强宣传、提高质量、扩大投入"这类无对象、无步骤、无指标的表述。
 
 ## 多 Agent 协作与真实性
 

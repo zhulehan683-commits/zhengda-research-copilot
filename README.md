@@ -149,10 +149,15 @@ python scripts/workflow.py review --project $project --stage registration --revi
 | 阶段门禁规则与 BLOCKED 原因 | `references/gates.md` |
 | 研究设计、文献综述与二手材料 | `references/research-design.md` |
 | 问卷、抽样与测量质量 | `references/survey-quality.md` |
-| 统计分析与结果解释 | `references/analysis.md` |
-| 报告写作、图表与答辩准备 | `references/report-defense.md` |
+| 统计分析与结果解释 | `references/analysis.md` 与 `references/method-routing.md`（方法路由与失败降级） |
+| 文本分析与词云（条件能力） | `references/text-analysis.md` |
+| 图表选择与可视化审计 | `references/visualization-guide.md` |
+| 报告篇幅预算与图表交付契约 | `references/report-production.md` |
+| 报告写作与答辩准备 | `references/report-defense.md` |
 | AI 与其他 Agent 的协作边界 | `references/agents.md` |
-| 第三方 Skill 集成方法 | `references/integrations.md` |
+| 第三方 Skill 集成与已合并上游说明 | `references/integrations.md` |
+
+其中方法路由、文本分析、可视化审计、报告生产、Intake/方案模板与压力场景整合自 MIT 许可的 [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)，署名与文件清单见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 失败恢复与常见陷阱
 

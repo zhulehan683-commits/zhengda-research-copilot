@@ -60,6 +60,26 @@ class ReleaseContractTests(unittest.TestCase):
             with self.subTest(path=rel):
                 self.assertTrue((ROOT / rel).is_file(), rel)
 
+    def test_integrated_upstream_references_exist_and_are_attributed(self):
+        merged = [
+            "references/method-routing.md",
+            "references/text-analysis.md",
+            "references/visualization-guide.md",
+            "references/report-production.md",
+            "templates/intake.md",
+            "templates/model-option-comparison.md",
+            "templates/result-matrix.csv",
+            "templates/figure-register.csv",
+            "tests/pressure-scenarios.md",
+        ]
+        for rel in merged:
+            with self.subTest(path=rel):
+                self.assertTrue((ROOT / rel).is_file(), rel)
+        notices = (ROOT / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
+        self.assertIn("zhengdabei-survey-report-skill", notices)
+        self.assertIn("MIT", notices)
+        self.assertIn("DDXYY189", notices)
+
     def test_install_script_uses_staging_validation(self):
         script = (ROOT / "install.ps1").read_text(encoding="utf-8")
         self.assertIn("staging", script)

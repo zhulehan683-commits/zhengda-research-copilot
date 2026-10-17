@@ -5,6 +5,9 @@
 ## Unreleased
 
 ### Added
+- 整合 MIT 许可上游 [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill) 的核心参考文档：方法路由（`references/method-routing.md`）、条件化文本分析（`references/text-analysis.md`）、可视化审计（`references/visualization-guide.md`）、长篇报告生产契约（`references/report-production.md`）。
+- 新增启动 Intake、建模方案比较、结果矩阵与图表登记表模板；新增 `tests/pressure-scenarios.md` 压力场景清单。
+- `SKILL.md` 增加 Intake 字段分级（阻塞/设计/优化）、建模方案固定格式与结论/建议句式规范；`references/gates.md` 增加七维评分自查。
 - 新增项目规格文档，统一项目目标、13 阶段范围、协作协议、真实性边界和验收标准。
 - 新增贡献指南、安全报告说明、第三方来源说明、许可证决策记录与发布检查清单。
 - 新增 GitHub Actions 测试工作流和 GitHub About 文案。
