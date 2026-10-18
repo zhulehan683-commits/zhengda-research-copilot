@@ -1,6 +1,9 @@
 import sys
+import os
+import subprocess
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -10,10 +13,65 @@ import workflow
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_nonobject_project_and_task_states_rejected(self):
+        import json
+        state_file = self.root / 'state/project.json'
+        before = state_file.read_bytes()
+        state_file.write_text('[]')
+        with self.assertRaises(ValueError):
+            workflow.get_state(self.root)
+        state_file.write_bytes(before)
+        task_file = self.root / 'tasks/broken.json'
+        task_file.write_text('[]')
+        with self.assertRaises(ValueError):
+            task_queue.list_tasks(self.root)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows managed-path regression')
+    def test_managed_state_and_tasks_junctions_rejected(self):
+        for name in ['state', 'tasks']:
+            root = self.root / ('fixture-' + name)
+            outside = self.root / ('outside-' + name)
+            root.mkdir()
+            outside.mkdir()
+            link = root / name
+            env = {**os.environ, 'SURVEY_TEST_LINK': str(link), 'SURVEY_TEST_TARGET': str(outside)}
+            subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command',
+                            "$ErrorActionPreference='Stop'; New-Item -ItemType Junction "
+                            '-Path $env:SURVEY_TEST_LINK -Target $env:SURVEY_TEST_TARGET | Out-Null'],
+                           env=env, check=True, capture_output=True)
+            try:
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    workflow.init(root, 'zhengda-17', '2026-2027')
+                self.assertEqual(list(outside.iterdir()), [])
+            finally:
+                link.rmdir()
+
+    def test_path_check_without_windows_stat_constants(self):
+        import common
+        file = self.write('sources/portable.txt')
+        with mock.patch.object(common.stat, 'FILE_ATTRIBUTE_REPARSE_POINT', create=True):
+            delattr(common.stat, 'FILE_ATTRIBUTE_REPARSE_POINT')
+            self.assertEqual(workflow.within(self.root, 'sources/portable.txt'), file)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows junction regression')
+    def test_internal_junction_evidence_is_rejected(self):
+        directory = self.root / 'sources' / 'real'
+        directory.mkdir()
+        (directory / 'notice.txt').write_text('test fixture')
+        link = self.root / 'sources' / 'junction'
+        env = {**os.environ, 'SURVEY_TEST_LINK': str(link), 'SURVEY_TEST_TARGET': str(directory)}
+        subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command',
+                        "$ErrorActionPreference='Stop'; New-Item -ItemType Junction "
+                        '-Path $env:SURVEY_TEST_LINK -Target $env:SURVEY_TEST_TARGET | Out-Null'],
+                       env=env, check=True, capture_output=True)
+        self.addCleanup(lambda: link.rmdir() if link.exists() else None)
+        with self.assertRaisesRegex(ValueError, 'link|reparse'):
+            workflow.within(self.root, 'sources/junction/notice.txt')
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "competition"
+        self.root = Path(self.temp.name).resolve() / "competition"
         workflow.init(self.root, "zhengda-17", "2026-2027")
 
     def write(self, rel: str, text: str = "genuine-local-placeholder-for-structural-test"):

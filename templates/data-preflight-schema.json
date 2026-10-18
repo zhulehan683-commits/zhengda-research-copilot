@@ -1,0 +1,10 @@
+{
+  "note": "EXAMPLE FIELD NAMES ONLY. Replace with the real questionnaire codebook before use.",
+  "id_column": "respondent_id",
+  "missing_values": ["", "NA", "-99"],
+  "variables": {
+    "respondent_id": {"type": "string", "required": true},
+    "q1": {"type": "integer", "required": true, "min": 1, "max": 5},
+    "q2": {"type": "integer", "required": false, "min": 1, "max": 5}
+  }
+}

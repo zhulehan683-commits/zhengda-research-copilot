@@ -1,6 +1,6 @@
 # Contributing
 
-感谢关注 `market-survey-competition`。项目当前为 Preview，欢迎针对工作流、统计方法、文档和测试提出建议。
+感谢关注 `zhengda-research-copilot`。项目当前为 Preview，欢迎针对工作流、统计方法、文档和测试提出建议。
 
 ## 贡献前先确认
 

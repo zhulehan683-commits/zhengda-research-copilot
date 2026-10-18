@@ -1,5 +1,5 @@
 {
-  "checked_on": "2026-10-17",
+  "checked_on": "2026-10-18",
   "sources": [
     {
       "repository": "DDXYY189/zhengdabei-survey-report-skill",
@@ -93,6 +93,44 @@
         "apply_dim_weights",
         "summarize_scores"
       ]
+    },
+    {
+      "repository": "maydengximin-sketch/questionnaire-analysis-skill",
+      "commit": "a4e9f1b268d6c27ad791d579d3ee8577b99e8335",
+      "license": "MIT",
+      "license_file": "licenses/questionnaire-analysis-skill/LICENSE",
+      "adaptation_notes": "Adapted cleaning/measurement/reporting structure; corrected rigid thresholds, MCAR and CMB claims. No numeric examples or scripts copied.",
+      "components": [
+        {
+          "source_path": "SKILL.md",
+          "source_sha256": "833fb4966c12772e97c7b49f0e769a16ccd1e5c56172d21be6ff45acb4afb6c0",
+          "targets": [
+            "references/measurement-and-inference.md"
+          ]
+        },
+        {
+          "source_path": "references/02-data-cleaning.md",
+          "source_sha256": "0b37ec030e30fb684eb6db635f704a7b5e07408c119a5f1341f08b4798690686",
+          "targets": [
+            "references/measurement-and-inference.md"
+          ]
+        },
+        {
+          "source_path": "references/04-reliability-validity.md",
+          "source_sha256": "3bfd74e296ea93e5707100469362c3abc0798d0f5af86bca3d8944b05e7942f3",
+          "targets": [
+            "references/measurement-and-inference.md"
+          ]
+        },
+        {
+          "source_path": "references/08-reporting-apa.md",
+          "source_sha256": "8884cc3adf09d5766f83553b431e5a44165400901d6b86f7202f0afc2f27aea9",
+          "targets": [
+            "references/measurement-and-inference.md"
+          ]
+        }
+      ],
+      "license_sha256": "8a41548a9b31423a768b72d953cf46c832e09b3981c80998100828d06dd291a2"
     }
   ],
   "references_only": [

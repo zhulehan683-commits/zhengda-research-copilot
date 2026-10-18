@@ -82,9 +82,18 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_install_script_uses_staging_validation(self):
         script = (ROOT / "install.ps1").read_text(encoding="utf-8")
-        self.assertIn("staging", script)
-        self.assertIn("scripts\\workflow.py", script)
-        self.assertIn("Previous version backed up", script)
+        self.assertIn("install.py", script)
+        self.assertIn("$LASTEXITCODE", script)
+        installer = (ROOT / 'install.py').read_text(encoding='utf-8')
+        self.assertIn('Staging validation failed', installer)
+        self.assertIn('scripts/workflow.py', installer)
+
+    def test_skill_name_and_new_routes(self):
+        skill = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
+        self.assertIn('name: zhengda-research-copilot', skill)
+        self.assertIn('references/measurement-and-inference.md', skill)
+        self.assertIn('scripts/survey_audit.py', skill)
+        self.assertTrue((ROOT / 'docs/INSTALLATION.md').is_file())
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import contextlib
 import hashlib
 import json
 import os
+import stat
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +17,27 @@ def now() -> str:
 
 def project_root(value: str) -> Path:
     return Path(value).expanduser().resolve()
+
+
+def absolute_spelling(path: Path) -> Path:
+    """Expand Windows 8.3 names without resolving a symlink or Junction target."""
+    path = Path(os.path.abspath(path))
+    if os.name != 'nt':
+        return path
+    import ctypes
+    convert = ctypes.windll.kernel32.GetLongPathNameW
+    convert.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint]
+    convert.restype = ctypes.c_uint
+    prefix, suffix = path, []
+    while not os.path.lexists(prefix) and prefix != prefix.parent:
+        suffix.insert(0, prefix.name)
+        prefix = prefix.parent
+    size = convert(str(prefix), None, 0)
+    if size:
+        buffer = ctypes.create_unicode_buffer(size)
+        if convert(str(prefix), buffer, size):
+            return Path(buffer.value).joinpath(*suffix)
+    return path
 
 
 def within(project: Path, file: str, *, must_exist: bool = True) -> Path:
@@ -31,15 +53,19 @@ def within(project: Path, file: str, *, must_exist: bool = True) -> Path:
     if not candidate.is_absolute():
         candidate = root / candidate
     # Normalize '.' and '..' without following symlinks, then enforce containment.
-    candidate = Path(os.path.abspath(candidate))
+    candidate = absolute_spelling(candidate)
     if not candidate.is_relative_to(root):
         raise ValueError("File path escapes project root; copy an approved artifact into project first")
 
     cursor = root
     for part in candidate.relative_to(root).parts:
         cursor = cursor / part
-        if cursor.is_symlink():
-            raise ValueError("Symlink paths are not accepted for evidence: " + str(cursor))
+        try:
+            attrs = getattr(cursor.lstat(), 'st_file_attributes', 0)
+        except FileNotFoundError:
+            attrs = 0
+        if cursor.is_symlink() or attrs & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0):
+            raise ValueError("Symlink or reparse-point paths are not accepted for evidence: " + str(cursor))
 
     path = candidate.resolve()
     if not path.is_relative_to(root):

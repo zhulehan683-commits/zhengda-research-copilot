@@ -43,3 +43,8 @@ mathmodel-skill 的 [来源说明](licenses/mathmodel-skill/SOURCES.md) 和 [子
 ## 核验记录
 
 核验日期：2026-10-17。实际源文件来自上述固定提交；完整版权与许可文本随包保留。合并上游内容不转移其作者身份、不表示主办方或上游背书，也不代表已取得赛事通知、论文、受访者数据或其他第三方素材的再分发权。本项目自己的许可证仍按 [LICENSE-DECISION.md](LICENSE-DECISION.md) 待所有者决定。
+## 2026-10-18 新增适配
+
+`references/measurement-and-inference.md` 的清洗、测量诊断与结果报告框架改编自 [maydengximin-sketch/questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill)，固定提交 `a4e9f1b268d6c27ad791d579d3ee8577b99e8335` 的 `SKILL.md`、`references/02-data-cleaning.md`、`references/04-reliability-validity.md`、`references/08-reporting-apa.md`。Copyright (c) 2026 qualitative-research-skill contributors。许可为 MIT，原文完整保留在 `licenses/questionnaire-analysis-skill/LICENSE`。本项目改写清洗规则、缺失机制、测量前提和报告边界，没有合并其数值示例或运行脚本；逐文件 SHA-256 见 `docs/upstreams.lock.json`。
+
+`scdenney/open-science-skills` 的 survey-design 在本次核查为 CC BY-NC 4.0；仅作为外部资料链接，不将其文本或代码合并为本项目 MIT 组件。`MAS-32/conduct-market-research` 未在根目录确认到标准许可证，本轮未合并。Skills CLI 仅作为安装工具参考，未复制其代码。

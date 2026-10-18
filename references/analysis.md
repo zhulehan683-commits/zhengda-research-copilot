@@ -2,6 +2,8 @@
 
 ## 数据合同
 
+问卷分析先读 `references/measurement-and-inference.md`；填写 `templates/analysis-contract.csv`，对真实 CSV 按变量合同执行 `scripts/survey_audit.py`。预检不等同信效度、抽样代表性或模型诊断通过。
+
 保留源数据只读副本、SHA-256、变量字典、问卷版本、清洗脚本、执行命令和日志。分析仅使用脱敏数据。建立`变量 → 测量尺度 → 缺失逻辑 → 研究问题 → 分析方法`映射。
 
 ## 方法选择

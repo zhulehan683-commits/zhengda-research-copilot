@@ -1,0 +1,4 @@
+interface:
+  display_name: "正大杯研策"
+  short_description: "正大杯全流程研究、问卷与统计分析的证据驱动助手"
+  default_prompt: "使用 $zhengda-research-copilot，接续已有竞赛项目，识别当前阶段，给出可复核的下一步产物。"
