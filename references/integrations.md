@@ -8,6 +8,7 @@
 |---|---|---|
 | [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill)（MIT） | 方法路由、文本分析、可视化审计、报告生产契约、Intake/方案比较模板、压力场景 | `references/method-routing.md`、`references/text-analysis.md`、`references/visualization-guide.md`、`references/report-production.md`、`templates/intake.md`、`templates/model-option-comparison.md`、`templates/result-matrix.csv`、`templates/figure-register.csv`、`tests/pressure-scenarios.md` |
 | [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill)（MIT） | 三角色与交付物边界复核提示词；复用权重限制与分数汇总代码，补充七维校验 | `references/roles-and-review.md`、`scripts/score_review.py` |
+| [questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill)（MIT） | 清洗、信效度与结果报告框架；修正机械阈值和推断边界 | `references/measurement-and-inference.md`；无需另装上游 |
 
 ## 可选外部 Skill（不随本项目打包）
 
@@ -19,7 +20,7 @@
 | 市场研究 | [conduct-market-research](https://github.com/MAS-32/conduct-market-research) | 行业与竞品研究、证据分级、市场规模双路径核验 | 仅参考；需单独安装/验证 |
 | 问卷设计 | [open-science-skills / survey-design](https://github.com/scdenney/open-science-skills/tree/main/codex/survey-design) | 题项措辞、问卷顺序、预测试与调查偏差 | 仅参考；需单独安装/验证 |
 | 市场规模/抽样 | [claude-skills / market-research](https://github.com/alirezarezvani/claude-skills/tree/main/research-ops/skills/market-research) | 市场规模估算、样本量规划、市场细分 | 仅参考；需单独安装/验证 |
-| 量表统计 | [questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill) | 信度、效度、EFA/CFA、回归、SEM 等方法参考 | 仅参考；需单独安装/验证 |
+| 量表统计 | [questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill) | 信度、效度、EFA/CFA、回归、SEM 等方法参考 | 清洗/测量/报告框架已适配合并；完整版需单独审查 |
 | 问卷数据处理 | [survey-research](https://github.com/2811jh/survey-research) | 问卷数据导入、基础统计、交叉分析与报告处理 | 仅参考；执行前审查脚本和数据权限 |
 | 科学统计 | [scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | 统计检验、假设检查、效应量与推断参考 | 仅参考；需单独安装/验证 |
 | 工作流与质量门禁 | [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill) | 其他建模赛事、专用排版和算法参考 | 本项目已整合部分角色与评分逻辑；完整上游可按任务另行使用 |

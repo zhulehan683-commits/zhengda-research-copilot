@@ -17,3 +17,6 @@
 ## 最终一致性检查
 
 报告数字、论文图表、演讲稿、PPT、结果文件全部对照 `claim_evidence_matrix`。即使 `submission_package_manifest` 存在，也不等于上传成功；由团队提供提交回执，最后才能记为实交。
+## 只交付大纲时的状态
+
+大纲保存为 `defense/outline.md`，标记为待填真实结果的草稿。若已初始化，可登记为 `defense_notes`，但 `defense` 阶段继续保持 pending；不把占位大纲登记为真实 `slides`，没有实际演练就不登记 `mock_defense_log`。独立阶段咨询不必为了留痕补造前序通过记录。

@@ -9,7 +9,7 @@ import uuid
 from pathlib import Path
 
 from common import project_root, within, sha, read_json, atomic_json, local_lock, append_event, fail, now
-from workflow import STAGES
+from workflow import STAGES, get_state, state_file
 
 
 def filename(root: Path, task_id: str) -> Path:
@@ -18,32 +18,35 @@ def filename(root: Path, task_id: str) -> Path:
         if clean != task_id: raise ValueError()
     except ValueError as exc:
         raise ValueError("Invalid task id (must be canonical UUID)") from exc
-    return root / "tasks" / (clean + ".json")
+    return within(root, 'tasks/' + clean + '.json', must_exist=False)
 
 
 def load(root: Path, task_id: str) -> dict:
     path = filename(root, task_id)
     if not path.is_file(): raise ValueError("Task not found: " + task_id)
-    return read_json(path)
+    task = read_json(path)
+    if not isinstance(task, dict):
+        raise ValueError('Unsupported or damaged task schema')
+    return task
 
 
 def persist(root: Path, task: dict, event: dict):
     task["updated_at"] = now()
     task["revision"] += 1
     atomic_json(filename(root, task["task_id"]), task)
-    append_event(root / "state" / "task_events.jsonl", {"task_id": task["task_id"], "task_revision": task["revision"], **event})
+    append_event(state_file(root, 'task_events.jsonl'), {"task_id": task["task_id"], "task_revision": task["revision"], **event})
 
 
 def ensure_project(root: Path):
-    if not (root / "state" / "project.json").is_file():
-        raise ValueError("Project not initialized. Use workflow.py init first")
+    get_state(root)
+    within(root, 'tasks/.path-check', must_exist=False)
 
 
 def create(root: Path, stage: str, title: str, assignee: str, acceptance_file: str):
     ensure_project(root)
     if not assignee.strip() or not title.strip(): raise ValueError("Title and assignee required")
     contract = within(root, acceptance_file)
-    with local_lock(root / "state" / ".tasks.lock"):
+    with local_lock(state_file(root, '.tasks.lock')):
         tid = str(uuid.uuid4())
         task = {"task_id": tid, "stage": stage, "title": title.strip(), "assignee": assignee.strip(), "acceptance_file": str(contract.relative_to(root)), "acceptance_sha256": sha(contract), "status": "queued", "output": None, "review": None, "created_at": now(), "updated_at": now(), "revision": 0, "history": []}
         task["history"].append({"at": now(), "event": "created", "actor": "coordinator"})
@@ -54,7 +57,7 @@ def create(root: Path, stage: str, title: str, assignee: str, acceptance_file: s
 def change(root: Path, task_id: str, command: str, actor: str, **kwargs):
     ensure_project(root)
     if not actor.strip(): raise ValueError("Actor required")
-    with local_lock(root / "state" / ".tasks.lock"):
+    with local_lock(state_file(root, '.tasks.lock')):
         t = load(root, task_id)
         if sha(within(root, t["acceptance_file"])) != t["acceptance_sha256"]:
             raise ValueError("Acceptance criteria changed; create a new task")
@@ -89,7 +92,9 @@ def list_tasks(root: Path):
     ensure_project(root)
     tasks = []
     for f in sorted((root / "tasks").glob("*.json")):
-        t = read_json(f)
+        t = read_json(within(root, str(f)))
+        if not isinstance(t, dict):
+            raise ValueError('Unsupported or damaged task schema: ' + f.name)
         effective = t["status"]
         try:
             if sha(within(root, t["acceptance_file"])) != t["acceptance_sha256"]:

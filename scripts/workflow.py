@@ -28,12 +28,17 @@ ORDER = tuple(STAGES)
 SCHEMA = "1.0"
 
 
+def state_file(root: Path, name: str) -> Path:
+    return within(root, 'state/' + name, must_exist=False)
+
+
 def get_state(root: Path) -> dict:
-    path = root / "state" / "project.json"
+    path = state_file(root, 'project.json')
     if not path.is_file():
         raise FileNotFoundError("No project state. Run 'init' first: " + str(path))
     data = read_json(path)
-    if data.get("schema_version") != SCHEMA or set(data.get("stages", {})) != set(STAGES):
+    if (not isinstance(data, dict) or data.get("schema_version") != SCHEMA
+            or not isinstance(data.get('stages'), dict) or set(data['stages']) != set(STAGES)):
         raise ValueError("Unsupported or damaged project-state schema")
     return data
 
@@ -42,25 +47,27 @@ def persist(root: Path, data: dict, event: dict) -> None:
     # Both files are in same locked local project; if event append fails, operator must inspect.
     data["updated_at"] = now()
     data["revision"] += 1
-    atomic_json(root / "state" / "project.json", data)
-    append_event(root / "state" / "events.jsonl", {"revision": data["revision"], **event})
+    atomic_json(state_file(root, 'project.json'), data)
+    append_event(state_file(root, 'events.jsonl'), {"revision": data["revision"], **event})
 
 
 def init(root: Path, competition: str, season: str):
-    if (root / "state" / "project.json").exists():
+    if state_file(root, 'project.json').exists():
         raise ValueError("Project already exists; refusal to overwrite existing state")
     if competition != "zhengda-17":
         raise ValueError("Only zhengda-17 configuration is bundled; custom competition must be added explicitly")
     if season != "2026-2027":
         raise ValueError("Bundled zhengda-17 rules are for 2026-2027 only; add another verified rule pack for a different season")
     root.mkdir(parents=True, exist_ok=True)
-    with local_lock(root / "state" / ".project.lock"):
-        if (root / "state" / "project.json").exists():
+    for directory in ['sources', 'raw_private', 'data', 'analysis', 'report', 'defense', 'plans', 'tasks']:
+        within(root, directory + '/.path-check', must_exist=False)
+    with local_lock(state_file(root, '.project.lock')):
+        if state_file(root, 'project.json').exists():
             raise ValueError("Project state already exists")
         for d in ["sources", "raw_private", "data", "analysis", "report", "defense", "plans", "tasks"]:
             (root / d).mkdir(parents=True, exist_ok=True)
         # `.gitignore` in workspace prevents accidental initial commits of PII.
-        ignore = root / ".gitignore"
+        ignore = within(root, '.gitignore', must_exist=False)
         must_ignore = ["raw_private/", "private/", "state/", "tasks/", ".env", ".env.*", "*.key", "*.token", "*.pem", "*.p12"]
         old = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
         additions = [v for v in must_ignore if v not in old.splitlines()]
@@ -117,7 +124,7 @@ def evidence_add(root: Path, stage: str, key: str, file: str, author: str) -> di
     if stage == "fieldwork" and key == "raw_dataset" and (not relative.parts or relative.parts[0] != "raw_private"):
         raise ValueError("raw_dataset must be stored under the project's raw_private/ directory; do not place identifiable survey data in tracked folders")
     new = {"path": str(relative), "sha256": sha(f), "author": author.strip(), "recorded_at": now()}
-    with local_lock(root / "state" / ".project.lock"):
+    with local_lock(state_file(root, '.project.lock')):
         data = get_state(root)
         before = data["stages"][stage]["evidence"].get(key)
         if before and before["path"] == new["path"] and before["sha256"] == new["sha256"] and before["author"] == new["author"]:
@@ -133,7 +140,7 @@ def evidence_add(root: Path, stage: str, key: str, file: str, author: str) -> di
 def review_stage(root: Path, stage: str, reviewer: str, decision: str, note: str):
     if not reviewer.strip() or not note.strip():
         raise ValueError("Both reviewer identity and review note are required")
-    with local_lock(root / "state" / ".project.lock"):
+    with local_lock(state_file(root, '.project.lock')):
         data = get_state(root)
         gate = check(root, data, stage)
         if decision == "pass" and gate["status"] != "PASS_MECHANICAL_ONLY":

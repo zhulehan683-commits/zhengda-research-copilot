@@ -10,10 +10,11 @@ permissions:
 
 jobs:
   python-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - name: Check out repository
@@ -28,3 +29,15 @@ jobs:
         run: |
           python scripts/workflow.py --help
           python scripts/task_queue.py --help
+          python scripts/survey_audit.py --help
+          python scripts/score_review.py --help
+          python install.py --dry-run
+      - name: Verify offline install and agent adapter
+        shell: bash
+        run: |
+          python install.py --target-root "$RUNNER_TEMP/survey-shared" --agent-root "$RUNNER_TEMP/survey-agent" --mode copy
+          python install.py --target-root "$RUNNER_TEMP/survey-shared" --agent-root "$RUNNER_TEMP/survey-agent" --verify
+      - name: Verify Windows PowerShell wrapper
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./install.ps1 -TargetRoot "$env:RUNNER_TEMP\survey-powershell" -DryRun

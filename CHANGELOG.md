@@ -4,6 +4,14 @@
 
 ## Unreleased
 
+### 2026-10-18 升级
+- 增加 CSV 数据合同预检 CLI：必填缺失、类型、范围、重复标识、行结构、输入哈希和汇总诊断；只读原数据，仅在 analysis/ 新建输出。
+- 适配 MIT 许可 questionnaire-analysis-skill 的清洗/测量/报告框架，补充分析合同、逐题审核、便利样本推断边界、缺失机制和模型诊断。
+- 统一 Python 离线安装器与 PowerShell 入口，支持 D 盘主副本、显式 Agent 适配目录、Junction/符号链接或复制、哈希校验、备份与失败回滚；Skills CLI 安装另有独立说明。
+- 修复 Windows 证据/项目状态/任务目录的 Junction 绕过、长路径 staging、运行依赖缺失和非对象 JSON 输入错误。
+- 重写 README 与跨 Agent 启动提示词，名称更新为“正大杯研策 / zhengda-research-copilot”；原研究状态无需重置。
+- 扩展 Windows/Linux CI、安装和数据预检回归测试；外部执行端经 Magpie 调用，实测范围见 docs/VALIDATION.md。
+
 ### Added
 - 整合 mathmodel-skill 的三角色交付/独立复核提示词，并从 `score_artifact.py` 复用 `apply_dim_weights` 与 `summarize_scores`；新增只读七维汇总 CLI、字段校验和行为测试。
 - 保存上游固定提交、来源文件哈希和完整 MIT 声明；合并内容与外部引用分别登记。

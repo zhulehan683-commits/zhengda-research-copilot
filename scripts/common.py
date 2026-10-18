@@ -5,6 +5,7 @@ import contextlib
 import hashlib
 import json
 import os
+import stat
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,8 +39,12 @@ def within(project: Path, file: str, *, must_exist: bool = True) -> Path:
     cursor = root
     for part in candidate.relative_to(root).parts:
         cursor = cursor / part
-        if cursor.is_symlink():
-            raise ValueError("Symlink paths are not accepted for evidence: " + str(cursor))
+        try:
+            attrs = getattr(cursor.lstat(), 'st_file_attributes', 0)
+        except FileNotFoundError:
+            attrs = 0
+        if cursor.is_symlink() or attrs & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0):
+            raise ValueError("Symlink or reparse-point paths are not accepted for evidence: " + str(cursor))
 
     path = candidate.resolve()
     if not path.is_relative_to(root):
