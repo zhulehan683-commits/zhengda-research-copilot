@@ -71,7 +71,7 @@ class WorkflowTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "competition"
+        self.root = Path(self.temp.name).resolve() / "competition"
         workflow.init(self.root, "zhengda-17", "2026-2027")
 
     def write(self, rel: str, text: str = "genuine-local-placeholder-for-structural-test"):

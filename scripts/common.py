@@ -19,6 +19,27 @@ def project_root(value: str) -> Path:
     return Path(value).expanduser().resolve()
 
 
+def absolute_spelling(path: Path) -> Path:
+    """Expand Windows 8.3 names without resolving a symlink or Junction target."""
+    path = Path(os.path.abspath(path))
+    if os.name != 'nt':
+        return path
+    import ctypes
+    convert = ctypes.windll.kernel32.GetLongPathNameW
+    convert.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint]
+    convert.restype = ctypes.c_uint
+    prefix, suffix = path, []
+    while not os.path.lexists(prefix) and prefix != prefix.parent:
+        suffix.insert(0, prefix.name)
+        prefix = prefix.parent
+    size = convert(str(prefix), None, 0)
+    if size:
+        buffer = ctypes.create_unicode_buffer(size)
+        if convert(str(prefix), buffer, size):
+            return Path(buffer.value).joinpath(*suffix)
+    return path
+
+
 def within(project: Path, file: str, *, must_exist: bool = True) -> Path:
     """Resolve a project-local path and reject traversal and symlink components.
 
@@ -32,7 +53,7 @@ def within(project: Path, file: str, *, must_exist: bool = True) -> Path:
     if not candidate.is_absolute():
         candidate = root / candidate
     # Normalize '.' and '..' without following symlinks, then enforce containment.
-    candidate = Path(os.path.abspath(candidate))
+    candidate = absolute_spelling(candidate)
     if not candidate.is_relative_to(root):
         raise ValueError("File path escapes project root; copy an approved artifact into project first")
 

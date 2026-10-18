@@ -43,6 +43,7 @@ def ensure_project(root: Path):
 
 
 def create(root: Path, stage: str, title: str, assignee: str, acceptance_file: str):
+    root = root.resolve()
     ensure_project(root)
     if not assignee.strip() or not title.strip(): raise ValueError("Title and assignee required")
     contract = within(root, acceptance_file)
@@ -55,6 +56,7 @@ def create(root: Path, stage: str, title: str, assignee: str, acceptance_file: s
 
 
 def change(root: Path, task_id: str, command: str, actor: str, **kwargs):
+    root = root.resolve()
     ensure_project(root)
     if not actor.strip(): raise ValueError("Actor required")
     with local_lock(state_file(root, '.tasks.lock')):

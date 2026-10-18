@@ -115,6 +115,7 @@ def check(root: Path, data: dict, stage: str) -> dict:
 
 
 def evidence_add(root: Path, stage: str, key: str, file: str, author: str) -> dict:
+    root = root.resolve()
     if key not in STAGES[stage]:
         raise ValueError(f"Unknown evidence key {key}; allowed: {STAGES[stage]}")
     if not author.strip():

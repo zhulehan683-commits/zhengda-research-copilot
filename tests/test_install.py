@@ -17,7 +17,7 @@ class InstallTests(unittest.TestCase):
         spec.loader.exec_module(self.installer)
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.base = Path(self.temp.name)
+        self.base = Path(self.temp.name).resolve()
         self.target = self.base / 'shared' / self.installer.NAME
 
     def install(self, **kwargs):
