@@ -10,22 +10,23 @@ from pathlib import Path
 from common import project_root, within, sha, read_json, atomic_json, local_lock, append_event, fail, now
 
 STAGES = {
-    "registration": ["official_notice", "registration_confirmation"],
+    "registration": ["official_notice", "rules_verification", "registration_confirmation"],
     "knowledge": ["exam_result"],
     "team": ["team_roster"],
     "topic": ["topic_brief", "feasibility_check"],
     "desk_research": ["source_register", "research_gap"],
-    "design": ["survey_instrument", "sampling_plan", "research_ethics"],
+    "design": ["survey_instrument", "sampling_plan", "research_ethics", "design_manifest"],
     "pilot": ["pilot_log", "pilot_revision"],
     "fieldwork": ["collection_log", "raw_dataset", "provenance"],
     "cleaning": ["cleaning_script", "clean_dataset", "cleaning_report"],
-    "analysis": ["analysis_code", "result_tables", "diagnostic_report", "claim_map_draft"],
+    "analysis": ["analysis_code", "result_tables", "diagnostic_report", "claim_map_draft", "analysis_manifest"],
     "report": ["report_doc", "claim_evidence_matrix", "ai_usage_log", "rules_checklist"],
     "defense": ["slides", "defense_notes", "mock_defense_log"],
     "submission": ["submission_package_manifest", "receipt"],
 }
 ORDER = tuple(STAGES)
 SCHEMA = "1.0"
+DEPENDENCY_MANIFESTS = {"design_manifest", "analysis_manifest"}
 
 
 def state_file(root: Path, name: str) -> Path:
@@ -84,6 +85,49 @@ def init(root: Path, competition: str, season: str):
     return {"ok": True, "project": str(root), "stage_count": len(ORDER), "note": "Not enrolled; attendance and rules must be verified by user"}
 
 
+def manifest_problems(root: Path, key: str, manifest: Path) -> list[str]:
+    reasons = []
+    try:
+        data = read_json(manifest)
+    except (OSError, ValueError, UnicodeError) as exc:
+        return [f"invalid manifest {key}: {exc}"]
+    if not isinstance(data, dict) or set(data) - {"description", "files", "command", "environment"}:
+        return [f"invalid manifest {key}: expected description/files/command/environment fields"]
+    files = data.get("files")
+    if not isinstance(files, list) or not files:
+        return [f"invalid manifest {key}: files must be a nonempty array"]
+    seen = set()
+    for index, item in enumerate(files):
+        if not isinstance(item, dict) or set(item) - {"path", "sha256", "role"}:
+            reasons.append(f"invalid manifest {key}: file entry {index} has unsupported fields")
+            continue
+        relative = item.get("path")
+        expected = item.get("sha256")
+        if not isinstance(relative, str) or not relative.strip():
+            reasons.append(f"invalid manifest {key}: file entry {index} needs path")
+            continue
+        if relative in seen:
+            reasons.append(f"duplicate manifest path: {relative}")
+            continue
+        seen.add(relative)
+        if not isinstance(expected, str) or len(expected) != 64 or any(c not in "0123456789abcdef" for c in expected):
+            reasons.append(f"invalid SHA-256 in manifest {key}: {relative}")
+            continue
+        try:
+            target = within(root, relative)
+            if sha(target) != expected:
+                reasons.append(f"manifest dependency SHA-256 differs: {relative}")
+        except (ValueError, OSError) as exc:
+            reasons.append(f"invalid manifest dependency {relative}: {exc}")
+    command = data.get("command")
+    if command is not None and not isinstance(command, str):
+        reasons.append(f"invalid manifest {key}: command must be a string")
+    environment = data.get("environment")
+    if environment is not None and not isinstance(environment, str):
+        reasons.append(f"invalid manifest {key}: environment must be a string")
+    return reasons
+
+
 def evidence_problems(root: Path, data: dict, stage: str) -> list[str]:
     reasons = []
     items = data["stages"][stage]["evidence"]
@@ -96,6 +140,8 @@ def evidence_problems(root: Path, data: dict, stage: str) -> list[str]:
             f = within(root, e["path"])
             if sha(f) != e["sha256"]:
                 reasons.append("SHA-256 differs: " + key)
+            elif key in DEPENDENCY_MANIFESTS:
+                reasons.extend(manifest_problems(root, key, f))
         except (ValueError, OSError, KeyError) as exc:
             reasons.append(f"invalid evidence {key}: {exc}")
     return reasons
@@ -191,7 +237,8 @@ def main() -> int:
         elif args.command == "review": result = review_stage(root, args.stage, args.reviewer, args.decision, args.note)
         else: raise ValueError("Unknown command")
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0 if result.get("status") != "BLOCKED" else 3
+        outcome = str(result.get("status", "")).lower()
+        return 3 if outcome in {"blocked", "fail", "rework"} else 0
     except (ValueError, OSError, RuntimeError, KeyError) as exc:
         return fail(exc)
 

@@ -4,16 +4,16 @@
 
 | 阶段 | 核心工作 | 最少证据键 | 进入下一阶段的独立确认 |
 |---|---|---|---|
-| registration | 年度/本校通知核验、个人报名 | official_notice, registration_confirmation | 本人完成报名且核实状态 |
+| registration | 年度/本校通知核验、个人报名 | official_notice, rules_verification, registration_confirmation | 本人完成报名且核实状态；全国/赛区/本校规则适用范围已记录 |
 | knowledge | 统计基础、调查方法、知识赛练习与本人考试 | exam_result | 真实成绩/资格；不代考 |
 | team | 组建合规团队，确认分工和研究能力 | team_roster | 队员本人确认/同校与人数符合当届规则 |
 | topic | 多选题评估、需求痛点、可得样本与可行性 | topic_brief, feasibility_check | 问题真实、范围合理、可做调查 |
 | desk_research | 官方数据、行业报告、文献及理论框架 | source_register, research_gap | 来源可靠，变量与研究假设有依据 |
-| design | 总体、抽样、样本量、问卷、访谈/合规 | survey_instrument, sampling_plan, research_ethics | 问卷可执行，逻辑与保护措施到位 |
+| design | 总体、抽样、样本量、问卷、访谈/合规 | survey_instrument, sampling_plan, research_ethics, design_manifest | 问卷可执行，逻辑与保护措施到位；问卷、变量字典和分析合同已冻结 |
 | pilot | 预测试，修订问卷及实施计划 | pilot_log, pilot_revision | 真实预调查记录、质量问题可解释 |
 | fieldwork | 正式实地/线上调查及质量监控 | collection_log, raw_dataset, provenance | 真实样本、受访同意、范围一致；`raw_dataset` 原始文件必须放在工作区 `raw_private/` 下 |
 | cleaning | 定义并执行剔除、缺失、反向编码 | cleaning_script, clean_dataset, cleaning_report | 变动前后数量与原因可复现 |
-| analysis | 统计、模型诊断与研究问题对应 | analysis_code, result_tables, diagnostic_report, claim_map_draft | 数值来自代码、方法前提满足、不能偷换因果 |
+| analysis | 统计、模型诊断与研究问题对应 | analysis_code, result_tables, diagnostic_report, claim_map_draft, analysis_manifest | 数值来自代码、方法前提满足、实际依赖可核验、不能偷换因果 |
 | report | 正文图表、完整来源、合规与 AI 台账 | report_doc, claim_evidence_matrix, ai_usage_log, rules_checklist | 每个结论有数据/图表/来源，符合当届规则 |
 | defense | 数据驱动演示、模拟提问、纠错 | slides, defense_notes, mock_defense_log | 演示论点、证据、数据一致 |
 | submission | 当届格式审计、由队伍提交 | submission_package_manifest, receipt | 上传/参赛结果来自本人或官方系统 |

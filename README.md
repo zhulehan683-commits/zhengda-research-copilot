@@ -16,9 +16,12 @@
 | --- | --- | --- |
 | 问卷与分析合同 | 逐题审核构念、时间窗、选项、跳题、编码，提前约定主要分析与排除规则 | 不能代替预测试和调查实施 |
 | CSV 数据预检 | 检查必填缺失、类型、取值范围、重复编号、CSV 列结构；输出汇总诊断和哈希 | 不修改原数据，不自动剔除，不计算信效度或显著性 |
+| 研究合同冻结 | `design_manifest` 把问卷、变量字典和分析合同纳入哈希链；改动任一依赖会撤销旧验收 | 只证明依赖文件未变，不证明问卷或方法本身正确 |
+| 计算依赖追踪 | `analysis_manifest` 记录输入、代码、配置、结果和复现命令；辅助文件变化会使分析失效 | 需要用户显式列全依赖，不做自动依赖扫描 |
 | 测量与推断指引 | 反向计分、缺失机制、EFA/CFA、效应量、多重比较、非概率样本和复杂抽样边界 | 按研究设计判断，不能靠阈值认证科学性 |
 | 统一安装 | 共用主副本，可为不同 Agent 建链接；提供离线安装、备份、回滚和哈希校验 | 原生加载和模型调用需各自验证 |
 | 证据链与状态 | 文件 SHA-256、前序门禁、独立复核记录、上游变化使下游验收失效 | 身份、来源真实性和复核质量仍需人工核实 |
+| 多 Agent 任务交接 | 创建任务时绑定输入快照，提交时可记录实际命令、退出码和日志；输入漂移会标为失效 | 本地队列不是后台调度器，不自动调用其他 Agent |
 | 报告与答辩 | 方法路由、图表审核、正文证据绑定、篇幅预算、答辩问题 | 没有真实结果时只给计划、模板或占位结构 |
 
 运行资源仅依赖 Python 3.10+ 标准库；Python/R/SPSS/AMOS/MATLAB 等统计软件由实际分析任务另行选用，不随 skill 安装。
@@ -50,13 +53,23 @@ python install.py --verify
 默认主副本在 `~/.agents/skills/zhengda-research-copilot/`。Windows 可把主副本放到 D 盘，再让实际 Agent 技能目录链接到它：
 
 ```powershell
-python install.py --target-root D:\zlh\agents\skills --agent-root "$HOME\.agents\skills" --agent-root "$HOME\.codebuddy\skills"
-python install.py --target-root D:\zlh\agents\skills --agent-root "$HOME\.agents\skills" --agent-root "$HOME\.codebuddy\skills" --verify
+python install.py --target-root D:\zlh\agents\skills --agent-root "$HOME\.agents\skills" --agent-root "$HOME\.claude\skills" --agent-root "$HOME\.codebuddy\skills" --agent-root "$HOME\.hermes\skills"
+python install.py --target-root D:\zlh\agents\skills --agent-root "$HOME\.agents\skills" --agent-root "$HOME\.claude\skills" --agent-root "$HOME\.codebuddy\skills" --agent-root "$HOME\.hermes\skills" --verify
 ```
 
-`--agent-root` 是实际的 skills 根目录，可重复指定。Windows 使用 Junction，POSIX 使用符号链接；无法链接时用 `--mode copy`，升级时重新同步副本。已有目标默认拒绝覆盖；确认后加 `--force`，旧版备份到技能扫描根之外。Windows 的 `install.ps1` 委托同一 Python 安装器，不再整仓复制 `.git` 和测试缓存。
+`--agent-root` 是实际的 skills 根目录，可重复指定；只保留真实存在的 Agent 目录，不要为了“统一”创建没有产品使用的路径。Windows 使用 Junction，POSIX 使用符号链接；无法链接时用 `--mode copy`，升级时重新同步副本。已有目标默认拒绝覆盖；确认后加 `--force`，旧版备份到技能扫描根之外。Windows 的 `install.ps1` 委托同一 Python 安装器，不再整仓复制 `.git` 和测试缓存。文件安装成功不等于原生发现或模型执行成功，验证分层见安装指南。
 
 **Agent 路径、ZIP、更新、恢复和旧名迁移见 [安装指南](docs/INSTALLATION.md)。** 同一安装副本选择一种安装方式维护。旧标识 `market-survey-competition` 的研究状态可继续使用；归档旧技能后再启用新名，避免重复触发。
+
+## 先选一个入口
+
+不必一次跑完 13 个阶段。第一次使用先选最接近当前材料的一项：
+
+1. **还没有选题或数据**：让 Agent 读取 `templates/research-brief.md` 和 `templates/topic-scorecard.csv`，输出 3 个候选选题、研究对象、数据可达性、成本和淘汰理由；不要生成调查结果。
+2. **已有问卷草稿**：让 Agent 读取 `templates/questionnaire-review.csv`、`templates/analysis-contract.csv` 和 `references/measurement-and-inference.md`，逐题检查构念、选项、跳题、编码、主要分析和排除规则，输出待修改清单。
+3. **已有 CSV 和变量字典**：先按 `templates/data-preflight-schema.json` 写真实 schema，再运行 `survey_audit.py`；从 `READY_FOR_REVIEW` 进入人工复核，不要把它当成统计显著性通过。
+
+首轮草稿不需要先补造前序 `passed` 记录，也不会重置已有项目。只有正式阶段放行才需要完整证据和独立复核。
 
 ## 开始使用
 
@@ -88,6 +101,8 @@ python scripts/survey_audit.py --project $project --data raw_private/survey.csv 
 
 退出码 0 为 `READY_FOR_REVIEW`，3 为 `BLOCKED`（需处理的数据合同问题），2 为输入/执行错误。输出只含汇总计数和哈希，原数据保持不变。重复编号可能来自追访或多波次，需解释；预检通过不代表样本有效、量表有效或代表总体。Excel/SPSS 等文件先在获准环境导出 CSV 并保留编码信息。
 
+Schema 只接受已实现的约束：`schema_version`、`description`/`note`、`id_column`、`missing_values`、`variables`；变量规则支持 `type`、`required`、数值 `min`/`max`、`allowed_values`、`description` 和 `label`。拼错字段或写入脚本尚不执行的规则会返回输入错误，而不是静默通过。空白格始终按缺失处理。
+
 诊断文件只允许新建在 `analysis/` 内；重复运行时换一个输出文件名，已有文件及项目状态不会被覆盖。
 
 ### 初始化或恢复项目
@@ -100,6 +115,8 @@ python scripts/workflow.py status --project $project
 ```
 
 `init` 拒绝覆盖已有状态；已初始化时直接 `status`。脚本不会自动报名或生成实证数据。
+
+进入设计阶段时，用 `templates/design-manifest.json` 冻结问卷、变量字典和分析合同；进入分析阶段时，用 `templates/analysis-manifest.json` 列出输入、代码、配置和结果。两者都必须在项目内保存并由 `evidence add` 绑定。修改清单中的任一依赖后，旧阶段会机械失效，必须重新复核。
 
 ## 按阶段找工具
 
@@ -133,7 +150,7 @@ python scripts/workflow.py status --project $project
 | 本地任务交接参数 | `python scripts/task_queue.py --help` |
 | 七维评分汇总 | `python scripts/score_review.py <已填写的复核JSON>` |
 
-`gate` 通过只表示机械检查通过；`review` 是留痕，不能证明 reviewer 的身份与独立性。`task_queue.py` 记录创建、认领、提交和复核，不会自动启动其他 Agent。外部执行端必须实际调用、产生文件、运行验收，才算交付。
+`gate` 通过只表示机械检查通过；`review` 是留痕，不能证明 reviewer 的身份与独立性。`gate` / `review` 退出码 3 表示阻断或复核不通过，2 表示输入/执行错误；调用脚本时不要只判断“进程有没有启动”。`task_queue.py` 记录创建、认领、提交和复核，不会自动启动其他 Agent。创建任务时用 `--input` 绑定输入；提交时可记录 `--command`、`--exit-code` 和 `--log`。外部执行端必须实际调用、产生文件、运行验收，才算交付。
 
 ## 借鉴了哪些 Skill
 

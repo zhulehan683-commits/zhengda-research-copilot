@@ -1,0 +1,22 @@
+{
+  "description": "Freeze the questionnaire, codebook, and analysis contract before formal fieldwork. Replace example paths and hashes with the real project files.",
+  "files": [
+    {
+      "path": "plans/questionnaire.md",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "survey instrument"
+    },
+    {
+      "path": "plans/data-dictionary.csv",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "codebook"
+    },
+    {
+      "path": "plans/analysis-contract.csv",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "analysis contract"
+    }
+  ],
+  "command": "python scripts/survey_audit.py --project <project> --data raw_private/survey.csv --schema plans/data-schema.json",
+  "environment": "Record Python/R/SPSS/AMOS/MATLAB version and seed when applicable."
+}

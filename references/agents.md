@@ -6,14 +6,14 @@
 
 ## 交付契约
 
-任务字段：`task_id, stage, title, assignee, acceptance_file, inputs, status, history, output_path, sha256, reviewed_by`。
+任务字段：`task_id, stage, title, assignee, acceptance_file, inputs, execution, status, history, output, review`。`inputs` 记录项目内输入路径和 SHA-256；`execution` 记录实际命令、退出码和可选日志哈希。
 
 执行端：
-1. `create` 任务时提供验收条款文件和承接角色。
+1. `create` 任务时提供验收条款文件、承接角色和全部实际输入文件（`--input` 可重复）。
 2. 执行端用 `claim --actor <assignee>` 认领，隔离目录完成文件；不得直接写 `state/project.json`。
-3. 执行端运行实际计算/生成，提交文件+ SHA-256；“完成”只表示已提交候选输出，状态为 `needs_review`。
+3. 执行端运行实际计算/生成，提交文件+ SHA-256；建议同时用 `--command`、`--exit-code`、`--log` 记录实际执行证据。“完成”只表示已提交候选输出，状态为 `needs_review`。
 4. 独立审查者必须不同于 `assignee`，`review pass` 才将队列项标记 `accepted`。实际身份隔离仍由调用环境确认。
-5. `task_queue.py list` 同时显示存储状态和 `effective_status`；若验收条款或已提交输出文件在审核后变化，任务应显示 `STALE_ACCEPTANCE` / `STALE_OUTPUT`，不可继续把旧结果当作有效签收。
+5. `task_queue.py list` 同时显示存储状态和 `effective_status`；若输入、验收条款或已提交输出文件变化，任务应显示 `STALE_INPUT` / `STALE_ACCEPTANCE` / `STALE_OUTPUT`，不可继续把旧结果当作有效签收。输入变化后应创建新任务或显式刷新输入，不能直接沿用旧签收。
 6. 协调者将接受的成果与权威状态绑定，再执行阶段门禁；**任务 accepted != 阶段 passed**。
 
 ## 严格证据
@@ -30,9 +30,9 @@
 ## CLI 样例
 
 ```powershell
-python scripts/task_queue.py create --project "D:\Competitions\Zhengda2027" --stage analysis --assignee DSH --title "回归模型独立运行" --acceptance-file "D:\Competitions\Zhengda2027\plans\analysis_acceptance.md"
+python scripts/task_queue.py create --project "D:\Competitions\Zhengda2027" --stage analysis --assignee DSH --title "回归模型独立运行" --acceptance-file "D:\Competitions\Zhengda2027\plans\analysis_acceptance.md" --input "D:\Competitions\Zhengda2027\data\clean.csv" --input "D:\Competitions\Zhengda2027\analysis\run_analysis.py"
 python scripts/task_queue.py list --project "D:\Competitions\Zhengda2027"
 python scripts/task_queue.py claim --project "D:\Competitions\Zhengda2027" --id <task_id> --actor DSH
-python scripts/task_queue.py submit --project "D:\Competitions\Zhengda2027" --id <task_id> --actor DSH --output "D:\Competitions\Zhengda2027\analysis\results.csv"
+python scripts/task_queue.py submit --project "D:\Competitions\Zhengda2027" --id <task_id> --actor DSH --output "D:\Competitions\Zhengda2027\analysis\results.csv" --command "python analysis\run_analysis.py" --exit-code 0 --log "D:\Competitions\Zhengda2027\analysis\run.log"
 python scripts/task_queue.py review --project "D:\Competitions\Zhengda2027" --id <task_id> --actor IndependentQA --decision pass --note "复现数值一致"
 ```

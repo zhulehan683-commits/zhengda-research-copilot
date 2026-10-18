@@ -9,12 +9,16 @@
 - `topic-scorecard.csv`：备选题比较；
 - `source_register.csv`：文献、政策和二手市场数据来源；
 - `questionnaire-blueprint.csv`：研究问题、构念、题项、编码和分析方法映射；
+- `questionnaire-review.csv`：逐题审核构念、时间窗、选项、跳题和编码；
+- `analysis-contract.csv`：进入分析前的变量、估计量、排除规则、诊断和稳健性合同；
+- `design-manifest.json`：把问卷、变量字典和分析合同冻结为可核验的依赖清单；
 - `sampling-plan.md`：总体、抽样框、样本量与代表性限制；
 - `pilot-log.md`：真实预测试及问卷修订记录；
 - `fieldwork-log.csv`：调查实施和数据来源记录；
 - `data-dictionary.csv`：变量编码与数据类型；
 - `cleaning-report.md`：数据清洗决策与复现记录；
 - `analysis-plan.md`：统计方法、假设、诊断与稳健性计划；
+- `analysis-manifest.json`：列出实际输入、代码、配置、结果和复现命令；
 - `model-option-comparison.md`：比较候选方法的数据前提、诊断、失败条件和行动价值；
 - `result-matrix.csv`：逐研究问题记录结果、证据、限制与专业判断；
 - `figure-register.csv`：图表来源、样本量、正文插入位置和引用状态；

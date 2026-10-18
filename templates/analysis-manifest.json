@@ -1,0 +1,22 @@
+{
+  "description": "List the actual inputs, code, configuration, outputs, and reproduction command. Replace example paths and hashes with the real project files.",
+  "files": [
+    {
+      "path": "data/clean.csv",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "analysis input"
+    },
+    {
+      "path": "analysis/run_analysis.py",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "analysis code"
+    },
+    {
+      "path": "analysis/result_tables.csv",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "result table"
+    }
+  ],
+  "command": "python analysis/run_analysis.py",
+  "environment": "Record interpreter/package version, random seed, and execution log path."
+}

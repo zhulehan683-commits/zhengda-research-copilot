@@ -66,6 +66,37 @@ class SurveyAuditTests(unittest.TestCase):
             with self.subTest(variables=variables), self.assertRaises(ValueError):
                 self.audit()
 
+    def test_unsupported_or_unenforceable_schema_fields_rejected(self):
+        self.data.write_text('id,q1,age\na,3,20\n')
+        invalid = [
+            {'unknown_top_level': True, 'variables': {'id': {'type': 'string'}}},
+            {'variables': {'id': {'type': 'string', 'enum': ['a']}}},
+            {'variables': {'id': {'type': 'string', 'min': 1}}},
+            {'variables': {'age': {'type': 'number', 'min': None}}},
+            {'variables': {'age': {'type': 'number', 'max': None}}},
+            {'variables': {'q1': {'type': 'integer', 'allowed_values': [1, 2.5]}}},
+        ]
+        for schema in invalid:
+            with self.subTest(schema=schema):
+                self.schema.write_text(json.dumps(schema))
+                with self.assertRaises(ValueError):
+                    self.audit()
+
+    def test_whitespace_is_missing_and_allowed_values_are_enforced(self):
+        self.schema.write_text(json.dumps({
+            'missing_values': ['NA'],
+            'variables': {
+                'id': {'type': 'string', 'required': True},
+                'q1': {'type': 'integer', 'required': True, 'allowed_values': [1, 2, 3]},
+            },
+        }))
+        self.data.write_text('id,q1\n   ,1\na,9\n', encoding='utf-8')
+        result = self.audit()
+        self.assertEqual(result['status'], 'BLOCKED')
+        self.assertEqual(result['variables']['id']['missing'], 1)
+        self.assertEqual(result['variables']['q1']['disallowed'], 1)
+        self.assertNotIn('a,9', json.dumps(result))
+
     def test_nonobject_schema_rejected(self):
         self.data.write_text('id,q1,age\na,3,20\n')
         for value in [[], 'text', None, 123]:

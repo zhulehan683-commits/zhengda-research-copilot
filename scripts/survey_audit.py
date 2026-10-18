@@ -19,28 +19,59 @@ def audit(root: Path, data_file: str, schema_file: str, encoding='utf-8-sig') ->
     schema = read_json(schema_path)
     if not isinstance(schema, dict):
         raise ValueError('Schema must be a JSON object')
+    schema_fields = {'schema_version', 'description', 'note', 'id_column', 'missing_values', 'variables'}
+    if set(schema) - schema_fields:
+        raise ValueError('Unsupported schema fields: ' + ', '.join(sorted(set(schema) - schema_fields)))
     variables = schema.get('variables')
     if not isinstance(variables, dict) or not variables:
         raise ValueError('Schema needs a nonempty variables object')
     for name, rule in variables.items():
-        if not isinstance(rule, dict) or rule.get('type') not in ('string', 'number', 'integer'):
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError('Variable names must be nonempty strings')
+        if not isinstance(rule, dict):
+            raise ValueError('Variable rule must be an object: ' + name)
+        allowed_fields = {'type', 'required', 'min', 'max', 'allowed_values', 'description', 'label'}
+        if set(rule) - allowed_fields:
+            raise ValueError('Unsupported rule fields for ' + name + ': ' + ', '.join(sorted(set(rule) - allowed_fields)))
+        kind = rule.get('type')
+        if kind not in ('string', 'number', 'integer'):
             raise ValueError('Unsupported variable type: ' + name)
         for bound in ('min', 'max'):
-            value = rule.get(bound)
-            if value is not None and (isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value)):
+            if bound not in rule:
+                continue
+            value = rule[bound]
+            if value is None:
+                raise ValueError('Bounds cannot be null: ' + name)
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise ValueError('Bounds must be finite numbers: ' + name)
-        if rule.get('min', -math.inf) > rule.get('max', math.inf):
+            if kind == 'string':
+                raise ValueError('String variables do not support min/max: ' + name)
+        if rule.get('min') is not None and rule.get('max') is not None and rule['min'] > rule['max']:
             raise ValueError('Reversed bounds: ' + name)
         if 'required' in rule and not isinstance(rule['required'], bool):
             raise ValueError('required must be a boolean: ' + name)
+        if 'allowed_values' in rule:
+            allowed_values = rule['allowed_values']
+            if not isinstance(allowed_values, list) or not allowed_values:
+                raise ValueError('allowed_values must be a nonempty array: ' + name)
+            if kind == 'string':
+                if not all(isinstance(v, str) for v in allowed_values):
+                    raise ValueError('allowed_values must contain strings: ' + name)
+            else:
+                if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in allowed_values):
+                    raise ValueError('allowed_values must contain numbers: ' + name)
+                if kind == 'integer' and not all(isinstance(v, int) and not isinstance(v, bool) for v in allowed_values):
+                    raise ValueError('integer allowed_values must contain integers: ' + name)
     missing_values = schema.get('missing_values', [''])
     if not isinstance(missing_values, list) or not all(isinstance(v, str) for v in missing_values):
         raise ValueError('missing_values must be an array of strings')
-    missing_values = {v.strip() for v in missing_values}
+    missing_values = {v.strip() for v in missing_values} | {''}
     id_column = schema.get('id_column')
+    if id_column is not None and not isinstance(id_column, str):
+        raise ValueError('id_column must be a string')
     if id_column is not None and id_column not in variables:
         raise ValueError('id_column must be a declared variable')
-    stats = {name: {'missing': 0, 'invalid_type': 0, 'out_of_range': 0, 'valid': 0} for name in variables}
+    stats = {name: {'missing': 0, 'invalid_type': 0, 'out_of_range': 0, 'disallowed': 0, 'valid': 0} for name in variables}
     rows = Counter()
     identifiers = Counter()
     row_count = malformed = 0
@@ -78,6 +109,15 @@ def audit(root: Path, data_file: str, schema_file: str, encoding='utf-8-sig') ->
                     if numeric < rule.get('min', -math.inf) or numeric > rule.get('max', math.inf):
                         item['out_of_range'] += 1
                         continue
+                if 'allowed_values' in rule:
+                    allowed_values = rule['allowed_values']
+                    if rule['type'] == 'string':
+                        permitted = value in allowed_values
+                    else:
+                        permitted = numeric in allowed_values
+                    if not permitted:
+                        item['disallowed'] += 1
+                        continue
                 item['valid'] += 1
     if sha(data_path) != data_hash:
         raise ValueError('CSV changed during audit; rerun on a stable snapshot')
@@ -90,8 +130,10 @@ def audit(root: Path, data_file: str, schema_file: str, encoding='utf-8-sig') ->
             issues.append({'severity': 'block', 'code': code, 'count': count})
     if duplicate_rows:
         issues.append({'severity': 'review', 'code': 'duplicate_rows', 'count': duplicate_rows})
+    if set(header) - set(variables):
+        issues.append({'severity': 'review', 'code': 'unmapped_columns', 'count': len(set(header) - set(variables))})
     for name, item in stats.items():
-        for code in ('invalid_type', 'out_of_range', 'missing'):
+        for code in ('invalid_type', 'out_of_range', 'disallowed', 'missing'):
             if item[code]:
                 severity = 'review' if code == 'missing' and not variables[name].get('required') else 'block'
                 issues.append({'severity': severity, 'variable': name, 'code': code, 'count': item[code]})

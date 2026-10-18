@@ -85,8 +85,10 @@ class WorkflowTests(unittest.TestCase):
 
     def bind_registration(self):
         notice = self.write("sources/notice.txt")
+        rules = self.write("sources/rules.txt")
         receipt = self.write("sources/receipt.txt")
         self.bind("registration", "official_notice", notice)
+        self.bind("registration", "rules_verification", rules)
         self.bind("registration", "registration_confirmation", receipt)
         return notice, receipt
 
@@ -137,8 +139,10 @@ class WorkflowTests(unittest.TestCase):
 
     def test_reviewer_cannot_be_author(self):
         notice = self.write("sources/notice.txt")
+        rules = self.write("sources/rules.txt")
         receipt = self.write("sources/receipt.txt")
         self.bind("registration", "official_notice", notice, "same")
+        self.bind("registration", "rules_verification", rules, "same")
         self.bind("registration", "registration_confirmation", receipt, "same")
         with self.assertRaisesRegex(ValueError, "Reviewer cannot"):
             workflow.review_stage(self.root, "registration", "same", "pass", "self")
@@ -159,6 +163,44 @@ class WorkflowTests(unittest.TestCase):
             self.bind("fieldwork", "raw_dataset", raw)
         private_raw = self.write("raw_private/raw_responses.csv", "id,answer\n1,x\n")
         self.bind("fieldwork", "raw_dataset", private_raw)
+
+    def test_dependency_manifest_detects_changed_dependency(self):
+        instrument = self.write("plans/questionnaire.md", "version 1")
+        sampling = self.write("plans/sampling.md", "sampling plan")
+        ethics = self.write("plans/ethics.md", "consent")
+        contract = self.write("plans/analysis-contract.csv", "item,rule\nq1,total\n")
+        import hashlib
+        manifest = self.write("plans/design-manifest.json", "")
+        manifest.write_text(__import__("json").dumps({
+            "description": "frozen design contract",
+            "files": [
+                {"path": "plans/questionnaire.md", "sha256": hashlib.sha256(instrument.read_bytes()).hexdigest(), "role": "instrument"},
+                {"path": "plans/analysis-contract.csv", "sha256": hashlib.sha256(contract.read_bytes()).hexdigest(), "role": "analysis contract"},
+            ],
+            "command": "",
+            "environment": "local",
+        }), encoding="utf-8")
+        self.bind("design", "survey_instrument", instrument)
+        self.bind("design", "sampling_plan", sampling)
+        self.bind("design", "research_ethics", ethics)
+        self.bind("design", "design_manifest", manifest)
+        self.assertEqual(workflow.evidence_problems(self.root, workflow.get_state(self.root), "design"), [])
+        contract.write_text("item,rule\nq1,complete-case\n", encoding="utf-8")
+        problems = workflow.evidence_problems(self.root, workflow.get_state(self.root), "design")
+        self.assertTrue(any("manifest dependency" in x for x in problems), problems)
+
+    def test_review_fail_and_blocked_cli_return_three(self):
+        self.bind_registration()
+        for decision in ["fail", "blocked"]:
+            with self.subTest(decision=decision):
+                result = subprocess.run([
+                    sys.executable, str(ROOT / "scripts/workflow.py"), "review",
+                    "--project", str(self.root), "--stage", "registration",
+                    "--reviewer", "IndependentQA", "--decision", decision,
+                    "--note", "test terminal outcome",
+                ], capture_output=True, text=True, encoding="utf-8")
+                self.assertEqual(result.returncode, 3, result.stderr or result.stdout)
+                self.assertEqual(__import__("json").loads(result.stdout)["status"], "blocked")
 
     def test_symlink_evidence_is_rejected(self):
         target = self.write("sources/real_notice.txt")
@@ -195,6 +237,44 @@ class WorkflowTests(unittest.TestCase):
         output.write_text("value,9", encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "changed"):
             task_queue.change(self.root, tid, "review", "QA", decision="pass", note="reviewed")
+
+    def test_queue_detects_changed_inputs_before_submit_and_review(self):
+        contract = self.write("plans/acceptance.md", "Check numerical results")
+        source = self.write("analysis/source.csv", "x\n1\n")
+        task = task_queue.create(self.root, "analysis", "Run analysis", "DSH", str(contract), inputs=[str(source)])
+        tid = task["task_id"]
+        task_queue.change(self.root, tid, "claim", "DSH")
+        source.write_text("x\n2\n", encoding="utf-8")
+        output = self.write("analysis/result.csv", "x\n2\n")
+        with self.assertRaisesRegex(ValueError, "Task evidence changed"):
+            task_queue.change(self.root, tid, "submit", "DSH", output=str(output))
+        listing = task_queue.list_tasks(self.root)
+        self.assertEqual(listing["tasks"][0]["effective_status"], "STALE_INPUT")
+
+    def test_queue_records_execution_metadata(self):
+        task = self.create_task()
+        tid = task["task_id"]
+        task_queue.change(self.root, tid, "claim", "DSH")
+        output = self.write("analysis/result.csv", "x\n1\n")
+        log = self.write("analysis/run.log", "exit=0\n")
+        task_queue.change(self.root, tid, "submit", "DSH", output=str(output), command="python analysis.py", exit_code=0, log=str(log))
+        stored = task_queue.load(self.root, tid)
+        self.assertEqual(stored["execution"]["command"], "python analysis.py")
+        self.assertEqual(stored["execution"]["exit_code"], 0)
+        self.assertEqual(stored["execution"]["log"]["path"], "analysis/run.log")
+
+    def test_queue_detects_changed_execution_log(self):
+        task = self.create_task()
+        tid = task["task_id"]
+        task_queue.change(self.root, tid, "claim", "DSH")
+        output = self.write("analysis/result.csv", "x\n1\n")
+        log = self.write("analysis/run.log", "exit=0\n")
+        task_queue.change(self.root, tid, "submit", "DSH", output=str(output), command="python analysis.py", exit_code=0, log=str(log))
+        log.write_text("exit=1\n", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "execution log SHA-256 differs"):
+            task_queue.change(self.root, tid, "review", "IndependentQA", decision="pass", note="reviewed")
+        listing = task_queue.list_tasks(self.root)
+        self.assertEqual(listing["tasks"][0]["effective_status"], "STALE_EXECUTION")
 
     def test_queue_list_marks_accepted_output_stale(self):
         task = self.create_task()

@@ -29,7 +29,7 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 `registration → knowledge → team → topic → desk_research → design → pilot → fieldwork → cleaning → analysis → report → defense → submission`
 
 - 每个阶段输出：已完成事实、缺口、输入与产物、证据路径、下一闸门；参考 `references/stages.md`。
-- 使用 `python "<SKILL_ROOT>/scripts/workflow.py" status --project "<PROJECT_ROOT>"` 查看进度；`evidence add` 绑定本地真实材料，`gate` 做机械审核，`review` 记录独立审查结论。**仅有文件存在或 AI 给高分，不代表科学性通过**。
+- 使用 `python "<SKILL_ROOT>/scripts/workflow.py" status --project "<PROJECT_ROOT>"` 查看进度；`evidence add` 绑定本地真实材料，`gate` 做机械审核，`review` 记录独立审查结论。**仅有文件存在或 AI 给高分，不代表科学性通过**。`gate`/`review` 退出码 3 表示阻断或复核不通过，2 表示输入/执行错误。
 - 用户只需要一个阶段时仅执行该阶段，不强制完成全部十三个阶段。知识赛练习不得替代本人网考。没有真实调查数据，只能做设计、问卷、变量字典、代码框架；不得生成可冒充参赛结果的统计数字。
 - 单阶段咨询或草稿可以独立完成并留在工作区；全流程脚本的阶段 `passed` 仍要求前序证据通过。不要为了单阶段任务修改前序状态或重置已有项目。
 - 目标产物：研究计划、文献证据表、调查工具与抽样方案、真实调查记录、清洗代码和数据、可复核统计结果、报告、答辩 PPT/讲稿/模拟问答与提交记录。
@@ -38,8 +38,9 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 - 选题与二手资料 → `references/research-design.md`；涉及竞争、市场口径与规模时读 `references/market-research.md`。有获准且可用的外部研究 Skill 时可按需调用；引用原始出处，区分事实/推论/假设。
 - 问卷/抽样 → `references/survey-quality.md` 与 `references/measurement-and-inference.md`（逐题审核、分析合同、复杂抽样边界）；可选调用 `survey-design`、`zhengdabei-survey-report`，但先统一变量和样本定义。
+- 设计冻结 → 用 `templates/design-manifest.json` 把问卷、变量字典和分析合同列为 `design_manifest` 的依赖文件；设计证据变化后下游验收自动失效。正式报名前还要绑定 `rules_verification`，记录全国/赛区/本校规则的适用范围与来源。
 - 原始问卷 CSV 预检 → 根据真实变量字典修改 `templates/data-preflight-schema.json`，运行 `python "<SKILL_ROOT>/scripts/survey_audit.py" --project "<PROJECT_ROOT>" --data raw_private/<file.csv> --schema plans/<schema.json> --output analysis/data-preflight.json`。退出码 0 仅表示可进入人工复核，3 表示数据合同问题，2 表示输入/执行错误；不修改原数据、不自动删行、不批准阶段。按 `references/measurement-and-inference.md` 处理缺失、反向计分、信效度和推断边界。
-- 清洗、统计建模、复现 → `references/analysis.md` 与 `references/method-routing.md`（方法路由、最小输入与失败降级）；可选调用 `survey-research`、`questionnaire-analysis`、`statistical-analysis`。仅使用已安装且可发现的外部 Skill；没安装就按本流程独立工作，不捏造能力。
+- 清洗、统计建模、复现 → `references/analysis.md` 与 `references/method-routing.md`（方法路由、最小输入与失败降级）；用 `templates/analysis-manifest.json` 把实际输入、代码、配置和结果绑定为 `analysis_manifest`。可选调用 `survey-research`、`questionnaire-analysis`、`statistical-analysis`。仅使用已安装且可发现的外部 Skill；没安装就按本流程独立工作，不捏造能力。
 - 文本分析 → `references/text-analysis.md`。**条件能力**：只在存在真实、相关、可追溯且合规的文本时启用；只有结构化问卷时不做词云，词云只是高频词入口图，不能单独作为需求、情绪或因果结论。
 - 图表 → `references/visualization-guide.md`；每张图必须有图号、标题、来源、样本量、单位、图后解释与对应研究问题。
 - 报告与答辩 → `references/report-defense.md` 与 `references/report-production.md`（篇幅预算、图表交付契约）；报告引用真实计算结果，演示材料来自已核查报告。每个核心研究问题至少绑定一张可追溯的表或图。
@@ -57,7 +58,7 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 ## 多 Agent 协作与真实性
 
 - 单主写者：协调 Agent 唯一负责写项目权威状态；执行 Agent 只写隔离产物并提交路径、哈希、复现命令。质检者不得参与被审对象编写。详见 `references/agents.md`。
-- `scripts/task_queue.py` 是**本地任务交接与审计工具**，不是自动调度守护进程：只有外部编排器实际调用执行端、执行端提交结果、质检端签收，才算真实协作闭环。不存在就标注 `NOT_VERIFIED`，绝不把任务 JSON 误报为成功执行。
+- `scripts/task_queue.py` 是**本地任务交接与审计工具**，不是自动调度守护进程：创建任务时用 `--input` 绑定输入快照，提交时记录实际命令、退出码和日志；输入漂移会显示 `STALE_INPUT`。只有外部编排器实际调用执行端、执行端提交结果、质检端签收，才算真实协作闭环。不存在就标注 `NOT_VERIFIED`，绝不把任务 JSON 误报为成功执行。
 - `scripts/workflow.py evidence add` 只接受项目根目录内的普通文件；拒绝路径穿越与符号链接。`fieldwork/raw_dataset` 必须放在工作区的 `raw_private/` 下，该目录默认加入 `.gitignore`。
 - 变更前序证据后，下游已完成状态自动失效，必须针对影响范围复核。不得修改原始数据来获得显著性，且不得伪造问卷、受访者、收集记录、样本量、引用、模型系数或已完成的报名/考试。
 - 若官方规则限制 AI 使用，遵从该规则；所有 AI 辅助用途、人工核验和数据来源须留痕。清除或脱敏个人信息后才把数据交给外部 Agent、云端服务或共享仓库。
