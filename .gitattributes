@@ -1,0 +1,5 @@
+.agents/skills/** text eol=lf
+references/upstream-skills/** text eol=lf
+licenses/mattpocock-skills/LICENSE text eol=lf
+licenses/vercel-labs-skills/LICENSE text eol=lf
+licenses/questionnaire-analysis-skill/LICENSE text eol=lf

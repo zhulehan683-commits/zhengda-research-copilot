@@ -48,6 +48,8 @@ Windows 兼容入口：`./install.ps1 -TargetRoot D:\zlh\agents\skills -AgentRoo
 
 ## Agent 发现目录
 
+主包在 `.agents/skills/` 提供 `grill-me`、`grilling`、`find-skills` 研究适配入口，在 `references/upstream-skills/` 保留固定上游原文。离线安装器复制两者并核对哈希；研究路由在 `references/grill-me.md`、`references/find-skills.md`。客户端未发现子技能或没有 Skill 调用工具时，由主技能读取适配入口执行。文件随包不等于注册为全局技能，详见 [整合记录](SKILL_INTEGRATION.md)。
+
 下表按 [Skills CLI 的 Agent 配置](https://github.com/vercel-labs/skills/blob/main/src/agents.ts)核对（2026-10-18）；具体版本可能支持额外目录。仅在实际配置与应用文档相符时使用。
 
 | Agent | 常见全局技能根目录 | 本项目接入方式 |

@@ -42,6 +42,23 @@ class InstallTests(unittest.TestCase):
         self.assertEqual((Path(result['backup']) / 'local-note.txt').read_text(), 'keep')
         self.assertTrue(self.installer.verify(self.target)['ok'])
 
+    def test_install_preserves_bundled_skills_and_licenses(self):
+        self.install()
+        manifest = json.loads((self.target / self.installer.MANIFEST).read_text(encoding='utf-8'))
+        for name in [
+            '.agents/skills/grill-me/SKILL.md',
+            '.agents/skills/grilling/SKILL.md',
+            '.agents/skills/find-skills/SKILL.md',
+            'references/upstream-skills/grill-me/SKILL.md',
+            'references/upstream-skills/grilling/SKILL.md',
+            'references/upstream-skills/find-skills/SKILL.md',
+            'licenses/mattpocock-skills/LICENSE',
+            'licenses/vercel-labs-skills/LICENSE',
+        ]:
+            with self.subTest(path=name):
+                self.assertIn(name, manifest['files'])
+                self.assertEqual((ROOT / name).read_bytes(), (self.target / name).read_bytes())
+
     def test_detects_changed_and_missing_payload(self):
         self.install()
         (self.target / 'SKILL.md').write_text('changed', encoding='utf-8')
@@ -119,6 +136,23 @@ class InstallTests(unittest.TestCase):
         (source / 'scripts/common.py').unlink()
         with self.assertRaises(ValueError):
             self.installer.install(source, self.target.parent)
+
+    def test_missing_grilling_dependency_rejected(self):
+        source = self.base / 'source'
+        shutil.copytree(ROOT, source, ignore=shutil.ignore_patterns('.git', '__pycache__'))
+        (source / '.agents/skills/grilling/SKILL.md').unlink()
+        with self.assertRaises(ValueError):
+            self.installer.install(source, self.target.parent)
+
+    def test_linked_bundled_skill_parent_rejected(self):
+        source = self.base / 'source'
+        shutil.copytree(ROOT, source, ignore=shutil.ignore_patterns('.git', '__pycache__'))
+        original_linked = self.installer.linked
+        def linked_parent(path):
+            return path == source / '.agents' or original_linked(path)
+        with mock.patch.object(self.installer, 'linked', side_effect=linked_parent):
+            with self.assertRaisesRegex(ValueError, 'Linked payload ancestor'):
+                self.installer.payload(source)
 
     def test_nonobject_manifest_returns_structured_failure(self):
         self.install()

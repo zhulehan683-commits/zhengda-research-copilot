@@ -18,11 +18,18 @@ MANIFEST = '.skill-install.json'
 FILES = ('SKILL.md', 'README.md', 'CODEX_START.md', 'install.py', 'install.ps1',
          'THIRD_PARTY_NOTICES.md', 'LICENSE-DECISION.md', 'SECURITY.md',
          'CHANGELOG.md', 'CONTRIBUTING.md', 'LICENSE')
-DIRECTORIES = ('scripts', 'references', 'templates', 'competitions', 'licenses', 'agents', 'docs')
+DIRECTORIES = ('scripts', 'references', 'templates', 'competitions', 'licenses', 'agents', 'docs',
+               '.agents/skills')
 REQUIRED = ('SKILL.md', 'scripts/workflow.py', 'scripts/task_queue.py',
             'scripts/survey_audit.py', 'scripts/common.py', 'scripts/score_review.py',
             'references/stages.md', 'references/gates.md',
-            'competitions/zhengda-17/rules.json', 'THIRD_PARTY_NOTICES.md')
+            'competitions/zhengda-17/rules.json', 'THIRD_PARTY_NOTICES.md',
+            '.agents/skills/grill-me/SKILL.md', '.agents/skills/grilling/SKILL.md',
+            '.agents/skills/find-skills/SKILL.md',
+            'references/upstream-skills/grill-me/SKILL.md',
+            'references/upstream-skills/grilling/SKILL.md',
+            'references/upstream-skills/find-skills/SKILL.md',
+            'licenses/mattpocock-skills/LICENSE', 'licenses/vercel-labs-skills/LICENSE')
 
 
 def linked(path: Path) -> bool:
@@ -46,6 +53,11 @@ def payload(source: Path) -> list[Path]:
     paths = [source / name for name in FILES if (source / name).exists()]
     for name in DIRECTORIES:
         folder = source / name
+        ancestor = folder.parent
+        while ancestor != source and ancestor != ancestor.parent:
+            if linked(ancestor):
+                raise ValueError('Linked payload ancestor: ' + str(ancestor))
+            ancestor = ancestor.parent
         if linked(folder):
             raise ValueError('Linked payload directory: ' + str(folder))
         if not folder.exists():

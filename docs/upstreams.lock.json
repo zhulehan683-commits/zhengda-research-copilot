@@ -131,6 +131,55 @@
         }
       ],
       "license_sha256": "8a41548a9b31423a768b72d953cf46c832e09b3981c80998100828d06dd291a2"
+    },
+    {
+      "repository": "mattpocock/skills",
+      "commit": "49dd158d1076134a641b33efb035946536778336",
+      "license": "MIT",
+      "license_file": "licenses/mattpocock-skills/LICENSE",
+      "components": [
+        {
+          "source_path": "skills/productivity/grill-me/SKILL.md",
+          "targets": [
+            "references/upstream-skills/grill-me/SKILL.md",
+            ".agents/skills/grill-me/SKILL.md"
+          ],
+          "source_sha256": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
+          "original_copy": "references/upstream-skills/grill-me/SKILL.md"
+        },
+        {
+          "source_path": "skills/productivity/grilling/SKILL.md",
+          "targets": [
+            "references/upstream-skills/grilling/SKILL.md",
+            ".agents/skills/grilling/SKILL.md",
+            "references/grill-me.md"
+          ],
+          "source_sha256": "befdff1e27a1dfe2a294d5871169ac1afe16d983911daa4f32627514a48c1e15",
+          "original_copy": "references/upstream-skills/grilling/SKILL.md"
+        }
+      ],
+      "license_sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+      "adaptation_notes": "Byte-identical originals live under references/upstream-skills (original_copy). Research-adapted discoverable entries live under .agents/skills. Source hashes apply only to original_copy, not adapted targets."
+    },
+    {
+      "repository": "vercel-labs/skills",
+      "commit": "13e4063a1cf913f5606d57d42ab83a86f5001e04",
+      "license": "MIT",
+      "license_file": "licenses/vercel-labs-skills/LICENSE",
+      "components": [
+        {
+          "source_path": "skills/find-skills/SKILL.md",
+          "targets": [
+            "references/upstream-skills/find-skills/SKILL.md",
+            ".agents/skills/find-skills/SKILL.md",
+            "references/find-skills.md"
+          ],
+          "source_sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f",
+          "original_copy": "references/upstream-skills/find-skills/SKILL.md"
+        }
+      ],
+      "license_sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca",
+      "adaptation_notes": "Byte-identical originals live under references/upstream-skills (original_copy). Research-adapted discoverable entries live under .agents/skills. Source hashes apply only to original_copy, not adapted targets."
     }
   ],
   "references_only": [
@@ -138,6 +187,11 @@
       "repository": "MAS-32/conduct-market-research",
       "commit": "b932488e6e48e268d9eaf99b33359b787943d4e1",
       "reason": "No LICENSE found in checked snapshot; no files redistributed"
+    },
+    {
+      "repository": "Shiaoming123/readme-skills",
+      "commit": "d504414579dedbc5e7a86dd720ea2204a1bb9e08",
+      "reason": "Read SKILL.md and README guidance for evidence-based restructuring. No source files redistributed; not a runtime dependency."
     }
   ]
 }

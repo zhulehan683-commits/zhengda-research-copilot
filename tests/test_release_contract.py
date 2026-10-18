@@ -1,3 +1,4 @@
+import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -99,8 +100,34 @@ class ReleaseContractTests(unittest.TestCase):
         skill = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
         self.assertIn('name: zhengda-research-copilot', skill)
         self.assertIn('references/measurement-and-inference.md', skill)
+        self.assertIn('references/grill-me.md', skill)
+        self.assertIn('references/find-skills.md', skill)
         self.assertIn('scripts/survey_audit.py', skill)
+
+    def test_bundled_skill_snapshots_match_pinned_sources(self):
+        lock = json.loads((ROOT / 'docs/upstreams.lock.json').read_text(encoding='utf-8'))
+        sources = {entry['repository']: entry for entry in lock['sources']}
+        for repo in ['mattpocock/skills', 'vercel-labs/skills']:
+            source = sources[repo]
+            self.assertRegex(source['commit'], r'^[0-9a-f]{40}$')
+            license_bytes = (ROOT / source['license_file']).read_bytes()
+            self.assertEqual(hashlib.sha256(license_bytes).hexdigest(), source['license_sha256'])
+            for component in source['components']:
+                path = component['original_copy']
+                with self.subTest(path=path):
+                    original = (ROOT / path).read_bytes()
+                    self.assertEqual(hashlib.sha256(original).hexdigest(),
+                                     component['source_sha256'])
+        self.assertTrue((ROOT / '.agents/skills/grilling/SKILL.md').is_file())
         self.assertTrue((ROOT / 'docs/INSTALLATION.md').is_file())
+
+    def test_recorded_license_hashes_match_checkout_bytes(self):
+        lock = json.loads((ROOT / 'docs/upstreams.lock.json').read_text(encoding='utf-8'))
+        for source in lock['sources']:
+            if 'license_sha256' in source:
+                with self.subTest(repository=source['repository']):
+                    actual = hashlib.sha256((ROOT / source['license_file']).read_bytes()).hexdigest()
+                    self.assertEqual(actual, source['license_sha256'])
 
 
 if __name__ == "__main__":

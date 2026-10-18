@@ -10,9 +10,11 @@
 | [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill)（MIT） | 三角色与交付物边界复核提示词；复用权重限制与分数汇总代码，补充七维校验 | `references/roles-and-review.md`、`scripts/score_review.py` |
 | [questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill)（MIT） | 清洗、信效度与结果报告框架；修正机械阈值和推断边界 | `references/measurement-and-inference.md`；无需另装上游 |
 
-## 可选外部 Skill（不随本项目打包）
+另有两项协作技能：Matt Pocock 的 `grill-me` / `grilling` 与 Vercel 的 `find-skills` 在 `.agents/skills/` 提供研究适配入口，分别通过 `references/grill-me.md`、`references/find-skills.md` 接入。上游原文另存于 `references/upstream-skills/`，与适配入口一同分发；缺少原生调用工具时读取适配入口。来源和差异见 `docs/SKILL_INTEGRATION.md`。
 
-本表用于按任务路由到可选参考项目。它们**不是本 Skill 的内置依赖**：安装本项目不会自动安装、调用或验证任何上游 Skill。开始使用前，应查看目标仓库当前版本、入口文件、依赖、许可证和数据权限要求。
+## 可选外部 Skill（未合并部分不随本项目打包）
+
+本表用于按任务路由到可选参考项目。表中未合并部分不是内置依赖，不随本项目自动注册、调用或验证。开始使用前，应查看目标仓库当前版本、入口文件、依赖、许可证和数据权限要求。
 
 | 任务阶段 | 参考项目 | 适合补充的能力 | 当前关系 |
 |---|---|---|---|

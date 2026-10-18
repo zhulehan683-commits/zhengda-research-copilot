@@ -33,7 +33,6 @@ mathmodel-skill 的 [来源说明](licenses/mathmodel-skill/SOURCES.md) 和 [子
 | 项目 | 参考方向 |
 | --- | --- |
 | [MAS-32/conduct-market-research](https://github.com/MAS-32/conduct-market-research/tree/b932488e6e48e268d9eaf99b33359b787943d4e1) | 商业研究与证据核验；该快照未见 LICENSE，不复制代码或提示词；本项目 `references/market-research.md` 独立编写 |
-| [maydengximin-sketch/questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill) | 量表与问卷统计 |
 | [2811jh/survey-research](https://github.com/2811jh/survey-research) | 问卷处理 |
 | [scdenney/open-science-skills](https://github.com/scdenney/open-science-skills/tree/main/codex/survey-design) | 问卷设计 |
 | [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills/tree/main/research-ops/skills/market-research) | 市场规模与抽样 |
@@ -48,3 +47,16 @@ mathmodel-skill 的 [来源说明](licenses/mathmodel-skill/SOURCES.md) 和 [子
 `references/measurement-and-inference.md` 的清洗、测量诊断与结果报告框架改编自 [maydengximin-sketch/questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill)，固定提交 `a4e9f1b268d6c27ad791d579d3ee8577b99e8335` 的 `SKILL.md`、`references/02-data-cleaning.md`、`references/04-reliability-validity.md`、`references/08-reporting-apa.md`。Copyright (c) 2026 qualitative-research-skill contributors。许可为 MIT，原文完整保留在 `licenses/questionnaire-analysis-skill/LICENSE`。本项目改写清洗规则、缺失机制、测量前提和报告边界，没有合并其数值示例或运行脚本；逐文件 SHA-256 见 `docs/upstreams.lock.json`。
 
 `scdenney/open-science-skills` 的 survey-design 在本次核查为 CC BY-NC 4.0；仅作为外部资料链接，不将其文本或代码合并为本项目 MIT 组件。`MAS-32/conduct-market-research` 未在根目录确认到标准许可证，本轮未合并。Skills CLI 仅作为安装工具参考，未复制其代码。
+
+## 2026-10-18 Grill Me 与 Find Skills 整合
+
+本节更正早期草稿中“未找到来源、完全原创”的表述。现已核对真实 GitHub 来源，保留上游原文并按 MIT 条款分发，研究适配指南按上游方法改编。
+
+| 来源 | 固定提交 | 分发与适配 | 完整许可 |
+| --- | --- | --- | --- |
+| [mattpocock/skills](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336) | `49dd158d1076134a641b33efb035946536778336` | `grill-me`、`grilling` 原文保存在 `references/upstream-skills/`；`.agents/skills/` 入口和 `references/grill-me.md` 为研究适配 | [MIT 全文](licenses/mattpocock-skills/LICENSE)，Copyright (c) 2026 Matt Pocock |
+| [vercel-labs/skills](https://github.com/vercel-labs/skills/tree/13e4063a1cf913f5606d57d42ab83a86f5001e04) | `13e4063a1cf913f5606d57d42ab83a86f5001e04` | `find-skills` 原文保存在 `references/upstream-skills/`；`.agents/skills/find-skills/` 入口和 `references/find-skills.md` 为研究适配 | [MIT 全文](licenses/vercel-labs-skills/LICENSE)，Copyright (c) 2026 Vercel, Inc. |
+
+`references/upstream-skills/` 原文保持字节一致；锁文件的 `source_sha256` 校验上游源文本，新组件的 `original_copy` 指定字节一致副本，`targets` 还包含改编产物，不能用源哈希校验改编文本。许可哈希另行记录。研究适配入口支持直接执行、有限范围访谈、离线降级和项目级安装；安装数和 stars 仅作发现线索。
+
+上游 [Issue #893](https://github.com/mattpocock/skills/issues/893) 作为结束时解释完整方案的参考，不分发其正文，不声称该建议已进入上游原文。README 重写参考 [Shiaoming123/readme-skills](https://github.com/Shiaoming123/readme-skills/tree/d504414579dedbc5e7a86dd720ea2204a1bb9e08) 的 `SKILL.md`、README 及写作参考指南；仅作为写作方法参考，不复制分发其文件，也不是研究运行依赖。

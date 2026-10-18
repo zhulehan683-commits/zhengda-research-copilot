@@ -4,6 +4,13 @@
 
 ## Unreleased
 
+### Grill Me / Find Skills 整合（2026-10-18）
+- 固定 MIT 上游 `mattpocock/skills` 与 `vercel-labs/skills` 的三份原文，保留 `grill-me` 对 `grilling` 的依赖；完整许可和 SHA-256 纳入来源锁文件。
+- 加入研究决策压力测试与外部能力发现的适配指南，支持没有原生 Skill 调用工具时直接读取；纯讨论不初始化项目。
+- 可发现入口改为自含的研究适配版，完整上游原文移至 `references/upstream-skills/`；避免独立调用时绕过安装范围、离线降级和访谈范围规则。
+- 离线安装器携带子技能与许可，增加安装完整性回归测试；README 按项目事实与首次使用路径全面重写。
+- 修正既有问卷来源许可的换行/哈希一致性和“仅参考”重复分类，补充所有已记录许可哈希的回归校验。
+
 ### 2026-10-18 升级
 - 增加 `design_manifest` / `analysis_manifest` 依赖清单，问卷、变量字典、分析合同、输入、代码和配置变化会使旧阶段失效；`rules_verification` 纳入报名门禁。
 - 任务队列创建时保存输入哈希，提交时可记录实际命令、退出码与日志哈希；列表新增 `STALE_INPUT` / `STALE_EXECUTION`。`gate`/`review` 的阻断与不通过统一返回退出码 3。

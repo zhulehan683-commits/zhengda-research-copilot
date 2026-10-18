@@ -13,8 +13,10 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 ## 第一次启动
 
+先识别本轮模式：用户明确要压力提问时读 `references/grill-me.md`；要寻找或接入外部能力时读 `references/find-skills.md`。这两个模式及单次咨询只读相关材料，不自动初始化目录。用户要求建立项目或需要持久化研究产物时再执行下列项目启动步骤。
+
 1. 先读取 `references/stages.md` 与 `references/gates.md`；需要跨 Agent 交接时读取 `references/agents.md`，需要市场/问卷/统计方法时再按任务读取专题文件。不要把整份 README 当作每次启动必读上下文。
-2. 检查当前工作目录是否已有 `state/project.json`，有则读已有状态并接续，**不要重置**。没有则运行：
+2. 检查用户指定的 `PROJECT_ROOT/state/project.json`，有则读已有状态并接续，**不要重置**。需要创建项目且尚无状态时运行：
    `python "<SKILL_ROOT>/scripts/workflow.py" init --project "<PROJECT_ROOT>" --competition zhengda-17 --season 2026-2027`
 3. 按 `templates/intake.md` 建立 Intake。字段分级：
    - **阶段相关字段**：先识别本轮目标。报名、知识赛、组队无需先有选题；选题阶段可比较候选问题与对象。进入调查设计前才需明确研究问题和总体，正式分析和报告结论需真实数据与诊断。只补问影响当前任务的缺口，不阻塞可执行的准备工作；
@@ -46,6 +48,10 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 - 报告与答辩 → `references/report-defense.md` 与 `references/report-production.md`（篇幅预算、图表交付契约）；报告引用真实计算结果，演示材料来自已核查报告。每个核心研究问题至少绑定一张可追溯的表或图。
 - 竞赛规则/学术诚信/数据隐私 → `references/gates.md`；一切冲突由当届官方规则优先裁决。
 - 需要拆分研究、分析、写作与复核职责时 → `references/roles-and-review.md`；其角色与检查点映射到本项目的 13 阶段，项目状态始终由本项目管理。
+- 用户要求“拷问/压力测试/grill me”研究决策时 → `references/grill-me.md`：分轮只问前置已定的问题，给出建议答案，达成共识前不改项目状态。
+- 用户想寻找外部 skill 或扩展能力时 → `references/find-skills.md`：先本地后生态，核验来源与许可证；并入仓库前必须固定 commit 并登记第三方声明。
+
+这两个指南接入 `.agents/skills/` 下的研究适配入口；入口可直接执行，不要求原生 Skill 工具或子 Agent。上游 `grill-me` 及其 `grilling` 依赖的完整原文保存在 `references/upstream-skills/`，仅用于来源对照；实际执行采用研究适配规则。客户端未发现子技能时直接读取适配入口，不把文件可读误报为原生加载。
 
 ## 建模方案固定格式
 
