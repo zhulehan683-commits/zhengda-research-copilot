@@ -39,6 +39,7 @@
 - `skill-creator` 的 `quick_validate.py` 在 UTF-8 模式下通过；本轮 32 个 Markdown 相对链接检查无失效目标。
 - Windows PowerShell 5.1 入口完成双目录 copy 安装和 `--verify`。默认策略禁止运行 ps1，实测仅为该进程使用 `-ExecutionPolicy Bypass`，未改全局策略；直接 `python install.py` 不需要此步骤。
 - Skills CLI **1.7.2** 实测：本地源码 `--list` 发现唯一技能；隔离项目安装到 Codex 通用目录，并为 CodeBuddy、Claude Code 建立 Junction；这些是安装/文件层验证，不是三个产品的完整模型执行验证。
+- Skills CLI **1.7.2** 补充实测：`npx skills add zhulehan683-commits/zhengda-research-copilot --list` 能从 GitHub 发现唯一技能并显示名称与描述；`npx skills use zhulehan683-commits/zhengda-research-copilot --skill zhengda-research-copilot` 能生成完整 `SKILL.md` 入口提示并下载引用资源。该验证覆盖生态发现与提示生成，不等价于任何特定 Agent 的原生加载或模型执行。
 - 安装副本实测：从 `D:\zlh\agents\skills\zhengda-research-copilot` 初始化 13 阶段项目、运行 `status`、执行合成 CSV 预检得到 `READY_FOR_REVIEW`，并用非法 schema 验证错误退出 2；原数据未被改写。
 
 ## Magpie 执行端审计

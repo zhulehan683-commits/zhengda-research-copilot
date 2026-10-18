@@ -19,7 +19,7 @@
 | 研究合同冻结 | `design_manifest` 把问卷、变量字典和分析合同纳入哈希链；改动任一依赖会撤销旧验收 | 只证明依赖文件未变，不证明问卷或方法本身正确 |
 | 计算依赖追踪 | `analysis_manifest` 记录输入、代码、配置、结果和复现命令；辅助文件变化会使分析失效 | 需要用户显式列全依赖，不做自动依赖扫描 |
 | 测量与推断指引 | 反向计分、缺失机制、EFA/CFA、效应量、多重比较、非概率样本和复杂抽样边界 | 按研究设计判断，不能靠阈值认证科学性 |
-| 统一安装 | 共用主副本，可为不同 Agent 建链接；提供离线安装、备份、回滚和哈希校验 | 原生加载和模型调用需各自验证 |
+| 统一安装 | 兼容 Skills CLI 与 Agent Skills 规范；共用主副本，可为不同 Agent 建链接；提供离线安装、备份、回滚和哈希校验 | 原生加载和模型调用需各自验证 |
 | 证据链与状态 | 文件 SHA-256、前序门禁、独立复核记录、上游变化使下游验收失效 | 身份、来源真实性和复核质量仍需人工核实 |
 | 多 Agent 任务交接 | 创建任务时绑定输入快照，提交时可记录实际命令、退出码和日志；输入漂移会标为失效 | 本地队列不是后台调度器，不自动调用其他 Agent |
 | 报告与答辩 | 方法路由、图表审核、正文证据绑定、篇幅预算、答辩问题 | 没有真实结果时只给计划、模板或占位结构 |
@@ -36,7 +36,7 @@
 npx skills add zhulehan683-commits/zhengda-research-copilot --skill zhengda-research-copilot -g -a codex -a claude-code -a codebuddy -a hermes-agent -y
 ```
 
-可删去不用的 `-a`，如只保留 `-a codex`。去掉 `-g` 则安装到当前项目。先查看可发现的技能：`npx skills add zhulehan683-commits/zhengda-research-copilot --list`。联网安装与更新由 Skills CLI 管理，未承诺其支持所有产品的所有版本。
+可删去不用的 `-a`，如只保留 `-a codex`。去掉 `-g` 则安装到当前项目。先查看可发现的技能：`npx skills add zhulehan683-commits/zhengda-research-copilot --list`；临时生成一次可用的完整提示词而不安装：`npx skills use zhulehan683-commits/zhengda-research-copilot --skill zhengda-research-copilot`。联网安装与更新由 Skills CLI 管理，未承诺其支持所有产品的所有版本。
 
 ### 离线 / D 盘统一安装
 
