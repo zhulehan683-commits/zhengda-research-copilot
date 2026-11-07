@@ -7,7 +7,7 @@
 | registration | 年度/本校通知核验、个人报名 | official_notice, rules_verification, registration_confirmation | 本人完成报名且核实状态；规则记录含核验日期与全国/本校 URL，且不超过 60 天 |
 | knowledge | 统计基础、调查方法、知识赛练习与本人考试 | exam_result | 真实成绩/资格；不代考 |
 | team | 组建合规团队，确认分工和研究能力 | team_roster | 队员本人确认/同校与人数符合当届规则 |
-| topic | 多选题评估、需求痛点、历届获奖题目密度、可得样本与可行性 | topic_brief, feasibility_check | 问题真实、范围合理、可做调查；撞题检索已记录 |
+| topic | 多选题评估、需求痛点、历届获奖题目密度（`topic_radar.py`）、可得样本与可行性 | topic_brief, feasibility_check | 问题真实、范围合理、可做调查；撞题检索已记录 |
 | desk_research | 官方数据、行业报告、文献及理论框架 | source_register, research_gap | 来源可靠，变量与研究假设有依据 |
 | design | 总体、抽样、样本量、问卷、访谈/合规 | survey_instrument, sampling_plan, research_ethics, design_manifest | 问卷可执行，逻辑与保护措施到位；问卷、变量字典和分析合同已冻结 |
 | pilot | 预测试，修订问卷及实施计划 | pilot_log, pilot_revision | 真实预调查记录、质量问题可解释 |

@@ -13,7 +13,7 @@ Research Design · Survey Analytics · Reproducible Workflows
 
 [快速开始](#快速开始) · [研究能力](#研究能力) · [十三阶段](#十三阶段研究流程) · [核心机制](#核心机制) · [交付资产](#交付资产与质量闭环)
 
-[Grill Me](#grill-me先把研究方案问清楚) · [Find Skills](#find-skills按具体任务补足能力) · [命令速查](#命令速查) · [安装与适配](#安装与适配) · [验证](#验证与边界) · [文档导航](#文档导航)
+[Grill Me](#grill-me先把研究方案问清楚) · [获奖题目雷达](#获奖题目雷达先查撞题再选题) · [Find Skills](#find-skills按具体任务补足能力) · [命令速查](#命令速查) · [安装与适配](#安装与适配) · [验证](#验证与边界) · [文档导航](#文档导航)
 
 </div>
 
@@ -30,6 +30,7 @@ Research Design · Survey Analytics · Reproducible Workflows
 | 研究问题驱动 | 从研究对象、可观测变量和数据可达性出发，选择问卷与分析方法 |
 | 按阶段交付 | 13 阶段分别维护输入、产物、证据与复核要求，支持接续工作 |
 | 关键决定可追溯 | 通过分析合同、依赖清单、来源登记和文件哈希保留研究依据 |
+| 先查撞题再选题 | 用 2022—2026 获奖题目聚合基线与本地快照检索识别同题、近题和覆盖缺口 |
 | 按需增强能力 | Grill Me 澄清研究决策，Find Skills 发现任务所需的专门工具 |
 | 跨 Agent 复用 | 主入口、参考资料、模板和 Python 工具共用一套内容 |
 
@@ -94,7 +95,7 @@ npx skills use zhulehan683-commits/zhengda-research-copilot --skill zhengda-rese
 | 研究任务 | 主要工作 | 代表性产物 |
 | --- | --- | --- |
 | 赛事准备 | 适用通知核验、知识赛学习、队伍资格与分工 | [规则核验表](templates/rules-checklist.md)、[学习计划](templates/knowledge-exam-study-plan.md)、[团队名册](templates/team-roster.csv) |
-| 选题与可行性 | 比较研究价值、样本可达性、资源与风险，保留淘汰理由 | [研究简报](templates/research-brief.md)、[选题评分表](templates/topic-scorecard.csv) |
+| 选题与可行性 | 比较研究价值、样本可达性、资源与风险，先用获奖题目雷达查撞题，再保留淘汰理由 | [研究简报](templates/research-brief.md)、[选题评分表](templates/topic-scorecard.csv)、[密度报告](templates/topic-density-report.md) |
 | 文献与市场研究 | 登记政策、文献、行业数据及其口径，区分事实、推论与假设 | [来源登记表](templates/source_register.csv)、[研究设计](references/research-design.md)、[市场研究](references/market-research.md) |
 | 问卷与抽样设计 | 建立构念、题项、编码和分析方法映射，检查时间窗、选项、跳题与抽样限制 | [问卷蓝图](templates/questionnaire-blueprint.csv)、[逐题审核表](templates/questionnaire-review.csv)、[抽样计划](templates/sampling-plan.md) |
 | 预测试与调查实施 | 记录真实预测试、问卷修订、调查渠道与数据来源 | [预测试日志](templates/pilot-log.md)、[调查记录](templates/fieldwork-log.csv) |
@@ -142,7 +143,7 @@ flowchart TD
     H -.-> F
 ```
 
-Grill Me 与 Find Skills 现在各有默认触发点：选题打分、设计冻结、分析合同和答辩定稿前先跑一次 3 问快速压力测试；当前交付缺少专门工具时先扫本地技能。研究问题已经明确且不需要外部能力时，直接推进当前工作。
+Grill Me、获奖题目雷达与 Find Skills 各有默认触发点：选题打分、设计冻结、分析合同和答辩定稿前先跑一次 3 问快速压力测试；选题比较或撞题判断先看聚合基线；当前交付缺少专门工具时先扫本地技能。研究问题已经明确且不需要外部能力时，直接推进当前工作。
 
 ## Grill Me：先把研究方案问清楚
 
@@ -170,6 +171,27 @@ python -X utf8 scripts/advisor.py grill --stage design --project $project --quic
 完成本轮讨论时，交付一段完整研究说明，以及已决定事项、待核验事实和剩余风险；经用户确认后接入研究简报、抽样计划或分析合同。纯讨论不自动创建研究项目或批准阶段，明确的执行任务也不必先访谈。
 
 详见[研究压力测试指南](references/grill-me.md)。
+
+## 获奖题目雷达：先查撞题再选题
+
+选题不能只问“这个方向听起来新不新”。雷达先回答三个更可核查的问题：公开获奖题目里有没有同题或近题、最高拿过什么奖、数据覆盖是否足以支持跨年比较。
+
+```powershell
+# 离线聚合基线：覆盖矩阵、主题累计、2026 一等奖主题、关键词信号
+python -X utf8 scripts/topic_radar.py baseline
+
+# 需要具体题目时，由用户显式抓取固定快照到项目私有目录
+python -X utf8 scripts/topic_radar.py fetch --project $project
+
+# 查询并生成可留痕报告
+python -X utf8 scripts/topic_radar.py search --project $project `
+  --query "清洁标签 零添加 配料表 添加剂 食品标签" `
+  --write plans/topic-density-clean-label.md
+```
+
+当前聚合基线来自 2022—2026 年 2,920 条全国一、二等奖题目。只有本科组在五年内连续完整；2025 年研究生组，2026 年研究生组、专科组和在华留学生组存在缺口，不能把空缺当作零。原始数据无明确再分发许可，因此本仓库只保留聚合计数，具体题目快照由用户本地抓取，不提交到公共仓库。
+
+雷达结果是撞题线索，不是创新性评分或获奖预测。零命中不等于赛道空白；同题一等奖只能证明评委接受过该方向。完整口径、已知信号和写回评分表的方法见[获奖题目雷达指南](references/award-topics.md)与[密度报告模板](templates/topic-density-report.md)。
 
 ## Find Skills：按具体任务补足能力
 
@@ -312,7 +334,7 @@ Schema 对未知字段和未实现约束采用严格拒绝方式，避免“写�
 
 ## 命令与工具
 
-完整命令参考见 [docs/COMMANDS.md](docs/COMMANDS.md)，涵盖项目状态、证据覆盖保护、模板复制、CSV 预检、基础统计/样本量，以及 Grill Me 与 Find Skills 快速入口。首次使用时优先执行 `status` 而不是重新初始化；升级或迁移安装副本后，先运行 `python install.py --verify`。
+完整命令参考见 [docs/COMMANDS.md](docs/COMMANDS.md)，涵盖项目状态、证据覆盖保护、模板复制、CSV 预检、基础统计/样本量、获奖题目雷达，以及 Grill Me 与 Find Skills 快速入口。首次使用时优先执行 `status` 而不是重新初始化；升级或迁移安装副本后，先运行 `python install.py --verify`。
 
 ## 安装与适配
 
@@ -395,6 +417,8 @@ zhengda-research-copilot/
 |-- references/                 阶段、研究方法、交付与协作指南
 |   |-- upstream-skills/        固定上游原文
 |   |-- grill-me.md             研究决策压力测试
+|   |-- award-topics.md         获奖题目撞题与密度检索
+|   |-- award-topics/           聚合基线与口径
 |   `-- find-skills.md          外部能力发现
 |-- templates/                  研究与交付模板
 |-- scripts/                    状态、预检、任务交接与评分工具
@@ -419,7 +443,7 @@ zhengda-research-copilot/
 | 有限模型场景 | 经 Magpie 进行独立审计、研究入口文本场景模拟 | 仅覆盖记录中的输入和环境 |
 | 客户端运行 | 按产品分别确认发现、脚本和模型任务 | 不能由文件校验推定全部客户端已加载 |
 
-最近一次整合的维护者记录包含 **101 项本地测试：100 通过、1 项因 Windows 符号链接权限跳过**，以及主副本与适配目标逐文件 manifest 校验。它们是具体版本与环境下的记录，最新内容和限制见[验证记录](docs/VALIDATION.md)。
+最近一次整合的维护者记录包含 **113 项本地测试：112 通过、1 项因 Windows 符号链接权限跳过**，以及 117 个文件的离线安装 manifest 校验。它们是具体版本与环境下的记录，最新内容和限制见[验证记录](docs/VALIDATION.md)。
 
 在**完整源码仓库**根目录可运行：
 
@@ -444,6 +468,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | 首次调用与会话输入 | [启动模板](CODEX_START.md) |
 | 安装、更新、迁移与多 Agent 路径 | [安装指南](docs/INSTALLATION.md) |
 | 各阶段要交什么材料 | [阶段地图](references/stages.md)、[质量门禁](references/gates.md) |
+| 获奖题目覆盖、撞题检索与解释边界 | [获奖题目雷达](references/award-topics.md)、[密度报告模板](templates/topic-density-report.md) |
 | 问卷、抽样与测量 | [问卷与抽样](references/survey-quality.md)、[测量与推断](references/measurement-and-inference.md) |
 | 分析方法与复现 | [方法路由](references/method-routing.md)、[统计复现](references/analysis.md)、[方案比较模板](templates/model-option-comparison.md) |
 | 全部 CLI 命令与示例项目 | [命令参考](docs/COMMANDS.md)、[示例项目](examples/sample-project/README.md) |
@@ -465,6 +490,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | [zhengdabei-survey-report-skill](https://github.com/DDXYY189/zhengdabei-survey-report-skill) | 方法路由、文本、图表、报告契约与模板 | 映射到本项目 13 阶段和证据链 |
 | [mathmodel-skill](https://github.com/rootkiller6788/mathmodel-skill) | 角色边界、独立复核提示与评分函数 | 七维输入校验，评分与阶段批准分离 |
 | [questionnaire-analysis-skill](https://github.com/maydengximin-sketch/questionnaire-analysis-skill) | 清洗、测量与结果报告框架 | 补充缺失机制、模型诊断和非概率抽样推断边界 |
+| [zhengda-cup-topic-dashboard](https://github.com/Bi-cmy/zhengda-cup-topic-dashboard) | 2022—2026 获奖题目聚合统计与覆盖口径 | 仅保留聚合计数；原始题目快照由用户本地显式抓取，不随包分发 |
 
 各项固定提交、源文件 SHA-256、原文副本、适配目标与完整许可保存在[第三方声明](THIRD_PARTY_NOTICES.md)、[来源锁文件](docs/upstreams.lock.json)及 `licenses/`。源哈希校验原文，安装哈希校验实际分发文件，二者用途不同。
 

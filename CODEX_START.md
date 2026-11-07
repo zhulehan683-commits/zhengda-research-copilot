@@ -16,11 +16,11 @@
 方法按测量与抽样条件选择，说明效应量、诊断与限制；不伪造数据、系数和引用。
 没有真实结果就交付计划、代码框架和占位结构，保持已有项目不被重置。
 根据实际可用执行端分工；任务输入用 --input 绑定，提交时记录命令、退出码、日志、哈希与独立验收，不强制厂商或角色。
-选题打分、设计冻结、分析合同冻结或答辩定稿前，先跑 advisor.py grill 的 3 问快速版；缺少专门能力时先跑 advisor.py find 扫本地，不凭记忆报能力。
+选题比较时先跑 topic_radar.py 的离线基线；需要具体题目时由我显式抓取快照。选题打分、设计冻结、分析合同冻结或答辩定稿前，先跑 advisor.py grill 的 3 问快速版；缺少专门能力时先跑 advisor.py find 扫本地，不凭记忆报能力。
 模型网关按本机已授权配置使用，不修改密钥、代理或全局 Agent 设置。
 给出本轮产物、验收结果、尚未核实事项和下一步。
 ```
 
 所有示例路径与占位符需换成真实值。单阶段咨询无需伪造前序通过记录；正式阶段验收遵循证据门禁。
 
-高频入口：要讨论方案时直接说“先 grill 3 问，等我答复再展开”；要找外部能力时直接说“先扫本地技能，再按需查 GitHub/skills.sh”。也可运行 `python -X utf8 scripts/advisor.py grill --stage <阶段> --quick` 或 `python -X utf8 scripts/advisor.py find --need "<任务>"`。仅讨论或寻找候选时不自动初始化研究目录。
+高频入口：要讨论方案时直接说“先 grill 3 问，等我答复再展开”；要查撞题时说“先看获奖题目基线和同义词”；要找外部能力时直接说“先扫本地技能，再按需查 GitHub/skills.sh”。也可运行 `python -X utf8 scripts/topic_radar.py baseline`、`python -X utf8 scripts/advisor.py grill --stage <阶段> --quick` 或 `python -X utf8 scripts/advisor.py find --need "<任务>"`。仅讨论、查聚合基线或寻找候选时不自动初始化研究目录，也不自动下载原始快照。

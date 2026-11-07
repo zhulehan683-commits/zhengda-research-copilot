@@ -31,6 +31,8 @@ jobs:
           python scripts/task_queue.py --help
           python scripts/survey_audit.py --help
           python scripts/score_review.py --help
+          python scripts/topic_radar.py --help
+          python scripts/topic_radar.py baseline
           python install.py --dry-run
       - name: Verify offline install and agent adapter
         shell: bash

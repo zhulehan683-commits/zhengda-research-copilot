@@ -1,0 +1,402 @@
+{
+  "schema_version": "1.0",
+  "generated_on": "2026-11-07",
+  "source": {
+    "page": "https://bi-cmy.github.io/zhengda-cup-topic-dashboard/",
+    "repository": "https://github.com/Bi-cmy/zhengda-cup-topic-dashboard",
+    "commit": "b37a6dc2338500f69244d2046886c66e7d317d55",
+    "data_sha256": "a1fb550d102e2a4076c44351c826eb7cebaa2624cd8b06b742c14d39b9e2cc1c",
+    "checked_on": "2026-11-07",
+    "redistribution_note": "Checked snapshot has no root LICENSE. This file keeps aggregate counts only; no raw title rows are bundled. Users fetch the snapshot themselves for exact title search."
+  },
+  "coverage": {
+    "total": 2920,
+    "years": [
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "groups": [
+      "本科组",
+      "研究生组",
+      "专科组",
+      "在华留学生组"
+    ],
+    "awards": {
+      "一等奖": 1323,
+      "二等奖": 1597
+    },
+    "confidence": {
+      "中": 614,
+      "低": 423,
+      "高": 1883
+    },
+    "year_group_counts": {
+      "2022": {
+        "本科组": 211,
+        "研究生组": 150,
+        "专科组": 162
+      },
+      "2023": {
+        "本科组": 277,
+        "研究生组": 151,
+        "专科组": 99
+      },
+      "2024": {
+        "本科组": 341,
+        "研究生组": 182,
+        "专科组": 128,
+        "在华留学生组": 87
+      },
+      "2025": {
+        "本科组": 386,
+        "专科组": 140,
+        "在华留学生组": 173
+      },
+      "2026": {
+        "本科组": 433
+      }
+    },
+    "comparable_across_all_years": [
+      "本科组"
+    ],
+    "missing_cells": [
+      {
+        "year": 2022,
+        "group": "在华留学生组"
+      },
+      {
+        "year": 2023,
+        "group": "在华留学生组"
+      },
+      {
+        "year": 2025,
+        "group": "研究生组"
+      },
+      {
+        "year": 2026,
+        "group": "研究生组"
+      },
+      {
+        "year": 2026,
+        "group": "专科组"
+      },
+      {
+        "year": 2026,
+        "group": "在华留学生组"
+      }
+    ]
+  },
+  "undergraduate_category_totals": [
+    {
+      "category": "食品饮料与餐饮",
+      "count": 218
+    },
+    {
+      "category": "健康医疗与养老",
+      "count": 212
+    },
+    {
+      "category": "文旅休闲与体育",
+      "count": 167
+    },
+    {
+      "category": "数字经济与互联网",
+      "count": 154
+    },
+    {
+      "category": "文化创意与传统文化",
+      "count": 150
+    },
+    {
+      "category": "品牌营销与零售消费",
+      "count": 112
+    },
+    {
+      "category": "综合社会与市场议题",
+      "count": 108
+    },
+    {
+      "category": "社会心理与青年生活",
+      "count": 89
+    },
+    {
+      "category": "农业农村与乡村振兴",
+      "count": 83
+    },
+    {
+      "category": "绿色低碳与新能源",
+      "count": 81
+    },
+    {
+      "category": "娱乐内容与二次元",
+      "count": 47
+    },
+    {
+      "category": "家庭人口与儿童成长",
+      "count": 35
+    },
+    {
+      "category": "就业创业与职业发展",
+      "count": 30
+    },
+    {
+      "category": "城市治理与公共服务",
+      "count": 27
+    },
+    {
+      "category": "交通出行与物流",
+      "count": 27
+    },
+    {
+      "category": "科技制造与产品创新",
+      "count": 26
+    },
+    {
+      "category": "教育学习与人才培养",
+      "count": 23
+    },
+    {
+      "category": "住房家居与生活服务",
+      "count": 19
+    },
+    {
+      "category": "美妆服饰与悦己消费",
+      "count": 13
+    },
+    {
+      "category": "宠物经济",
+      "count": 11
+    },
+    {
+      "category": "金融保险与支付",
+      "count": 9
+    },
+    {
+      "category": "产业发展与企业服务",
+      "count": 7
+    }
+  ],
+  "undergraduate_first_prizes_2026": [
+    {
+      "category": "文旅休闲与体育",
+      "count": 26
+    },
+    {
+      "category": "数字经济与互联网",
+      "count": 19
+    },
+    {
+      "category": "食品饮料与餐饮",
+      "count": 19
+    },
+    {
+      "category": "健康医疗与养老",
+      "count": 16
+    },
+    {
+      "category": "品牌营销与零售消费",
+      "count": 15
+    },
+    {
+      "category": "文化创意与传统文化",
+      "count": 14
+    },
+    {
+      "category": "综合社会与市场议题",
+      "count": 12
+    },
+    {
+      "category": "绿色低碳与新能源",
+      "count": 10
+    },
+    {
+      "category": "社会心理与青年生活",
+      "count": 10
+    },
+    {
+      "category": "城市治理与公共服务",
+      "count": 9
+    }
+  ],
+  "keyword_signals": [
+    {
+      "term": "零添加",
+      "count": 1,
+      "by_year": {
+        "2023": 1
+      },
+      "by_group": {
+        "本科组": 1
+      },
+      "by_award": {
+        "一等奖": 1
+      },
+      "by_confidence": {
+        "中": 1
+      }
+    },
+    {
+      "term": "添加剂",
+      "count": 1,
+      "by_year": {
+        "2025": 1
+      },
+      "by_group": {
+        "在华留学生组": 1
+      },
+      "by_award": {
+        "二等奖": 1
+      },
+      "by_confidence": {
+        "中": 1
+      }
+    },
+    {
+      "term": "配料表",
+      "count": 0,
+      "by_year": {},
+      "by_group": {},
+      "by_award": {},
+      "by_confidence": {}
+    },
+    {
+      "term": "食品标签",
+      "count": 0,
+      "by_year": {},
+      "by_group": {},
+      "by_award": {},
+      "by_confidence": {}
+    },
+    {
+      "term": "清洁标签",
+      "count": 0,
+      "by_year": {},
+      "by_group": {},
+      "by_award": {},
+      "by_confidence": {}
+    },
+    {
+      "term": "宠物",
+      "count": 23,
+      "by_year": {
+        "2022": 4,
+        "2023": 4,
+        "2024": 6,
+        "2025": 6,
+        "2026": 3
+      },
+      "by_group": {
+        "专科组": 7,
+        "在华留学生组": 2,
+        "本科组": 11,
+        "研究生组": 3
+      },
+      "by_award": {
+        "一等奖": 13,
+        "二等奖": 10
+      },
+      "by_confidence": {
+        "高": 23
+      }
+    },
+    {
+      "term": "低空",
+      "count": 28,
+      "by_year": {
+        "2025": 14,
+        "2026": 14
+      },
+      "by_group": {
+        "专科组": 2,
+        "本科组": 26
+      },
+      "by_award": {
+        "一等奖": 13,
+        "二等奖": 15
+      },
+      "by_confidence": {
+        "高": 28
+      }
+    },
+    {
+      "term": "陪伴机器人",
+      "count": 3,
+      "by_year": {
+        "2026": 3
+      },
+      "by_group": {
+        "本科组": 3
+      },
+      "by_award": {
+        "二等奖": 3
+      },
+      "by_confidence": {
+        "高": 3
+      }
+    },
+    {
+      "term": "AI陪伴",
+      "count": 6,
+      "by_year": {
+        "2025": 2,
+        "2026": 4
+      },
+      "by_group": {
+        "本科组": 6
+      },
+      "by_award": {
+        "一等奖": 2,
+        "二等奖": 4
+      },
+      "by_confidence": {
+        "高": 6
+      }
+    },
+    {
+      "term": "具身",
+      "count": 4,
+      "by_year": {
+        "2026": 4
+      },
+      "by_group": {
+        "本科组": 4
+      },
+      "by_award": {
+        "一等奖": 2,
+        "二等奖": 2
+      },
+      "by_confidence": {
+        "高": 4
+      }
+    },
+    {
+      "term": "Z世代",
+      "count": 467,
+      "by_year": {
+        "2022": 106,
+        "2023": 76,
+        "2024": 133,
+        "2025": 93,
+        "2026": 59
+      },
+      "by_group": {
+        "专科组": 124,
+        "在华留学生组": 47,
+        "本科组": 235,
+        "研究生组": 61
+      },
+      "by_award": {
+        "一等奖": 200,
+        "二等奖": 267
+      },
+      "by_confidence": {
+        "中": 111,
+        "低": 104,
+        "高": 252
+      }
+    }
+  ]
+}

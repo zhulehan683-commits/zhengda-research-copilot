@@ -26,8 +26,9 @@ class InstallTests(unittest.TestCase):
     def test_minimal_payload_and_verified_hashes(self):
         self.install()
         for name in ['SKILL.md', 'scripts/workflow.py', 'scripts/survey_audit.py',
-                     'references/stages.md', 'competitions/zhengda-17/rules.json',
-                     'THIRD_PARTY_NOTICES.md', 'licenses']:
+                     'scripts/topic_radar.py', 'references/stages.md',
+                     'references/award-topics.md', 'references/award-topics/baseline.json',
+                     'competitions/zhengda-17/rules.json', 'THIRD_PARTY_NOTICES.md', 'licenses']:
             self.assertTrue((self.target / name).exists(), name)
         self.assertFalse((self.target / '.git').exists())
         self.assertFalse((self.target / 'tests/test_install.py').exists())

@@ -96,3 +96,13 @@
 - 快速入口：`advisor.py find` 扫描仓库、用户级技能目录并去重；`grill` 按 topic/design/analysis/report/defense 生成问题与建议，`--write` 只新建 `plans/grill-*.md`。两者都不改变项目状态，也不把本地候选称为已安装或已联网搜索。
 - README 命令细节移入 `docs/COMMANDS.md`；新增 `docs/SURVEY_EXPORTS.md` 对照问卷星、腾讯问卷与 Credamo 的常见导出形态。文档中的平台行为是对常见导出的工程归纳，未逐版本截图验证。
 - 未完成或未验证：LICENSE 仍待所有者决定；未与真实赛事通知重新核验 2026-11-07 之后的规则；未跑完整 13 阶段真实项目；未证明所有客户端原生发现三个子技能。
+
+## 获奖题目雷达验证（2026-11-07）
+
+- Windows / Python 3.12.3：`python -X utf8 -m pytest tests -q` 得到 **112 通过、1 跳过**（跳过项仍为当前环境不支持的符号链接回归）。新增 10 项雷达测试覆盖 JS 快照解析、覆盖矩阵、多词去重、筛选、低置信度排除、截断、报告边界、项目缓存路径、显式本地抓取与拒绝覆盖。
+- 真实固定快照：从 `Bi-cmy/zhengda-cup-topic-dashboard` 的提交 `b37a6dc2338500f69244d2046886c66e7d317d55` 下载 `data.js`，得到 **2,920 条、1,342,252 字节**，SHA-256 为 `a1fb550d102e2a4076c44351c826eb7cebaa2624cd8b06b742c14d39b9e2cc1c`，与内置固定值一致。`topic_radar.py fetch` 的固定哈希校验通过。
+- 覆盖矩阵：本科组 211/277/341/386/433，研究生组 150/151/182/缺失/缺失，专科组 162/99/128/140/缺失，在华留学生组 缺失/缺失/87/173/缺失。只有本科组可跨五年比较，与源数据说明一致。
+- 清洁标签检索：`清洁标签 零添加 配料表 添加剂 食品标签` 去重命中 2 条；2023 年本科组一等奖、2025 年二等奖；其余三个查询词零命中。生成报告明确写出“零命中不等于无人研究”，并将最高奖项、低置信度和覆盖缺口分开。
+- 安装：`install.py --mode copy` 安装到独立目录后 `--verify` 通过，manifest 记录 **117 个文件**且无哈希错误；从安装副本运行 `topic_radar.py baseline`、`search` 与 `workflow.py --help` 均正常。安装器仍报告 `agent_runtime_verified: false`。
+- 项目缓存：在一次性测试项目中运行 `workflow.py init` 和 `topic_radar.py fetch --project`，快照写入 `raw_private/award-topics/data.js`，随后按项目路径检索成功；研究项目 `.gitignore` 已忽略 `raw_private/`。
+- 来源边界：上游仓库在核验时没有根目录标准许可证。仓库不包含原始 `data.js` 或 2,920 条题目明细，只包含聚合计数；测试检查 `references/award-topics/data.js` 不存在。此次验证不构成对原始数据的再分发授权，也不证明关键词检索能覆盖所有同义表达。

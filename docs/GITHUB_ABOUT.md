@@ -2,7 +2,7 @@
 
 ## Repository description
 
-面向正大杯等大学生市场调查与分析竞赛的 Agent Skill：13 阶段研究工作流、证据追踪、质量门禁与可审计的多 Agent 任务交接。
+面向正大杯等大学生市场调查与分析竞赛的 Agent Skill：13 阶段研究工作流、获奖题目撞题雷达、证据追踪、质量门禁与可审计的多 Agent 任务交接。
 
 ## Short tagline
 

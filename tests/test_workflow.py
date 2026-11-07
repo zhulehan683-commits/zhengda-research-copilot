@@ -115,6 +115,21 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("find", commands)
         self.assertNotIn("--stage registration", commands)
 
+    def test_status_at_topic_suggests_radar_and_grill(self):
+        self.bind_registration()
+        self.pass_stage("registration")
+        exam = self.write("sources/exam.txt")
+        self.bind("knowledge", "exam_result", exam)
+        self.pass_stage("knowledge")
+        roster = self.write("sources/team.csv")
+        self.bind("team", "team_roster", roster)
+        self.pass_stage("team")
+        status = workflow.status(self.root)
+        self.assertEqual(status["next_pending"], "topic")
+        commands = " ".join(status["suggested_actions"])
+        self.assertIn("topic_radar.py", commands)
+        self.assertIn("--stage topic", commands)
+
     def test_gate_and_hash_invalidation(self):
         notice, receipt = self.bind_registration()
         result = workflow.check(self.root, workflow.get_state(self.root), "registration")

@@ -10,7 +10,7 @@
 
 | 触发条件 | 默认动作 |
 |---|---|
-| 选题评分表即将定稿 | 跑 `advisor.py grill --stage topic --quick`，先问对象、可推翻假设、撞题证据 |
+| 选题评分表即将定稿 | 跑 `advisor.py grill --stage topic --quick`，先问对象、可推翻假设、撞题证据；再用 `topic_radar.py` 查聚合基线或快照 |
 | 问卷/抽样/分析合同即将冻结 | 跑 `--stage design --quick`，先问总体、渠道、样本量依据、缺失/排除规则 |
 | 分析结果即将写进报告 | 跑 `--stage analysis --quick`，先问主估计量、前提、多重比较、复现命令 |
 | 答辩材料即将定稿 | 跑 `--stage defense --quick`，先问最弱证据、样本偏差、数字一致性 |

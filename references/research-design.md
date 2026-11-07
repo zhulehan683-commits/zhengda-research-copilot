@@ -8,10 +8,15 @@
 
 在给候选题打分前，必须做一次公开获奖题目的密度检索：
 
-1. 在中国商业统计学会官网、赛区/本校公告和公开获奖名单中，用候选题的核心对象词、行为词和行业词分别检索；中英文同义词各试一次。
-2. 记录每个候选题的**同题数量、最高奖项、年份分布、最接近的题目**。同题已有一等奖是重复度的直接证据；多年空白是差异化的线索，但也要检查是否因为不可做。
-3. 把结果写进 `templates/topic-scorecard.csv` 的 `topic_density` 与 `topic_density_notes` 两列，并把公告链接放进 `problem_evidence` 或来源登记表。
-4. 不下载、不分发未授权的获奖全文；公开公告只用于题目去重和赛道判断，不能替代自己的调查证据。
+1. 先看离线聚合基线，判断是否值得继续查具体题目：
+   `python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" baseline`
+2. 需要精确题目时，由用户显式抓取固定快照到项目私有目录，再按核心对象词、行为词、行业词和中英文同义词检索：
+   `python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" fetch --project "<PROJECT_ROOT>"`
+   `python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" search --project "<PROJECT_ROOT>" --query "<词1 词2>" --write "<PROJECT_ROOT>/plans/topic-density.md"`
+3. 在中国商业统计学会官网、赛区/本校公告和公开获奖名单中补充检索，不能把第三方聚合数据当成唯一来源。
+4. 记录每个候选题的**同题数量、筛选范围、最高奖项、年份分布、最接近的题目**。同题已有一等奖是重复度的直接证据；多年空白是差异化的线索，但也要检查是否因为不可做。
+5. 把结果写进 `templates/topic-scorecard.csv` 的结构化密度列，并把公告链接放进 `problem_evidence` 或来源登记表。
+6. 不下载、不分发未授权的获奖全文；公开公告只用于题目去重和赛道判断，不能替代自己的调查证据。
 
 检索示例（按实际届次替换年份）：
 
@@ -22,6 +27,8 @@ site:china-cssc.org 正大杯 获奖 名单 <对象词>
 ```
 
 如果查不到公开名单，记录检索词、检索日期和“未找到”，不要据此声称赛道空白。
+
+零命中、低置信度和缺失组别的解释边界见 `references/award-topics.md`。雷达是撞题线索，不是创新性评分或获奖预测。
 
 ## 研究问题
 

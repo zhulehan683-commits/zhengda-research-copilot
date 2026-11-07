@@ -7,6 +7,7 @@
 - `team-roster.csv`：队伍成员资格、角色与能力；
 - `research-brief.md`：研究问题、证据、设计与可行性简报；
 - `topic-scorecard.csv`：备选题比较；
+- `topic-density-report.md`：获奖题目撞题检索、最接近题目与解释边界；
 - `source_register.csv`：文献、政策和二手市场数据来源；
 - `questionnaire-blueprint.csv`：研究问题、构念、题项、编码和分析方法映射；
 - `questionnaire-review.csv`：逐题审核构念、时间窗、选项、跳题和编码；

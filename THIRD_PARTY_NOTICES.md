@@ -26,6 +26,19 @@ mathmodel-skill 的 [来源说明](licenses/mathmodel-skill/SOURCES.md) 和 [子
 - `references/roles-and-review.md` 根据上游 `references/角色-阶段映射.md` 适配研究设计、分析实现、报告/答辩及交付物检查点。沿用本项目 13 阶段，不引入其他数学建模赛事规则、强制图数或第二套权威状态。
 - `scripts/score_review.py` 从上游 `scripts/score_artifact.py` 复用上述两个函数，其余七维输入校验、只读 CLI、建议状态与测试由本项目补充。分数只用于整理复核意见，不能认证研究质量、来源真实性或批准阶段。
 
+## 获奖题目聚合数据
+
+`references/award-topics/baseline.json` 是根据 [Bi-cmy/zhengda-cup-topic-dashboard](https://github.com/Bi-cmy/zhengda-cup-topic-dashboard/tree/b37a6dc2338500f69244d2046886c66e7d317d55) 公开页面与 `data.js` 整理的**聚合计数**，用于覆盖矩阵、主题累计和关键词信号。核验日期为 2026-11-07，固定提交为 `b37a6dc2338500f69244d2046886c66e7d317d55`，`data.js` SHA-256 为 `a1fb550d102e2a4076c44351c826eb7cebaa2624cd8b06b742c14d39b9e2cc1c`。
+
+该上游仓库在本次核验时**没有根目录标准许可证**，因此本项目：
+
+- 不打包、不再分发 2,920 条原始题目明细或原始 `data.js`；
+- 只保留人工整理的聚合计数与来源说明；
+- 由用户在明确授权范围内运行 `topic_radar.py fetch` 在本地取得快照；
+- 不声称上游、主办方或任何学校为本项目背书。
+
+聚合摘要不改变题目、公告和附件本身的版权归属。使用具体题目、公告链接或附件时，仍应核对原始出处和适用许可。
+
 ## 仅参考的项目
 
 下列项目仍仅保留链接，不分发它们的文件，也不声称已安装或已调用。

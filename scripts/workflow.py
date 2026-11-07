@@ -356,6 +356,12 @@ def status(root: Path, today: date | None = None) -> dict:
         suggestions.append(
             f'python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" grill '
             f'--stage {next_pending} --project "<PROJECT_ROOT>" --quick')
+    if next_pending == "topic":
+        suggestions.append(
+            'python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" baseline')
+        suggestions.append(
+            'python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" search '
+            '--project "<PROJECT_ROOT>" --query "<对象词 行为词 同义词>"')
     suggestions.append(
         'python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" find '
         '--need "<具体能力缺口>"  # only when a tool/skill is missing')

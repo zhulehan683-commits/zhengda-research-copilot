@@ -59,6 +59,27 @@ python -X utf8 scripts/power_calc.py chisq --effect-size 0.3 --df 1
 
 这些脚本只做成对完整案例分析，不插补、不加权、不自动反向计分。SEM、复杂抽样、机器学习等不在覆盖范围，见 [analysis.md](../references/analysis.md)。
 
+## 获奖题目雷达
+
+```powershell
+# 离线聚合基线；不联网、不含原始题目明细
+python -X utf8 scripts/topic_radar.py baseline
+
+# 由用户显式抓取固定快照到项目私有目录；不提交到 Git
+python -X utf8 scripts/topic_radar.py fetch --project $project
+
+# 检索题目、主题、标签和关键词；可限定年份/组别/奖项
+python -X utf8 scripts/topic_radar.py search --project $project `
+  --query "清洁标签 零添加 配料表 添加剂 食品标签" `
+  --exclude-low-confidence `
+  --write plans/topic-density-clean-label.md
+
+# 查看快照覆盖矩阵
+python -X utf8 scripts/topic_radar.py coverage --project $project
+```
+
+`fetch` 只在显式执行时联网，默认写入 `raw_private/award-topics/data.js`，并校验固定提交的 SHA-256。`search` 的零命中只表示当前快照和查询词下未观察到，不等于赛道空白；低置信度、缺失组别和同义词限制见 [获奖题目雷达](../references/award-topics.md)。
+
 ## 两个高频入口
 
 ```powershell

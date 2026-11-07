@@ -13,20 +13,22 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 ## 第一次启动
 
-先识别本轮模式：用户明确要压力提问时读 `references/grill-me.md`；要寻找或接入外部能力时读 `references/find-skills.md`。这两个模式及单次咨询只读相关材料，不自动初始化目录。用户要求建立项目或需要持久化研究产物时再执行下列项目启动步骤。
+先识别本轮模式：用户明确要压力提问时读 `references/grill-me.md`；要查撞题或判断获奖题目密度时读 `references/award-topics.md`；要寻找或接入外部能力时读 `references/find-skills.md`。这些模式及单次咨询只读相关材料，不自动初始化目录。用户要求建立项目或需要持久化研究产物时再执行下列项目启动步骤。
 
-## 两个高频入口（默认动作）
+## 三个高频入口（默认动作）
 
-这两个入口不是“等用户说出专用动词”才用；在下列时点默认先跑一次，成本低、能提前暴露返工：
+这些入口不是“等用户说出专用动词”才用；在下列时点默认先跑一次，成本低、能提前暴露返工：
 
 | 时点 | 默认动作 | 一条命令 |
 |---|---|---|
 | 选题打分前、设计冻结前、分析合同冻结前 | 先做 3 问快速压力测试；有分歧再展开完整轮次 | `python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" grill --stage design --project "<PROJECT_ROOT>" --quick` |
+| 选题比较、用户问“有没有人做过/会不会撞题”、需要判断赛道密度 | 先看离线聚合基线；需要具体题目时由用户授权抓取快照并检索 | `python -X utf8 "<SKILL_ROOT>/scripts/topic_radar.py" baseline` |
 | 用户问“有没有工具/skill 能做 X”、或某产物只能靠口头描述 | 先扫本地技能，再给生态检索命令；不要凭记忆报能力 | `python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" find --need "问卷 统计分析"` |
 
 - `grill` 只生成当前可回答的问题和建议答案，不改项目状态；用户确认后才把结论写入 Intake、抽样计划或分析合同。
+- `topic_radar` 默认只读离线基线；`fetch` 只由用户显式执行，快照写入项目 `raw_private/`，不会自动联网或提交。零命中不等于赛道空白，低置信度和缺失组别必须写明。
 - `find` 默认只读本地技能目录并打印 `npx skills find` 命令，不自动联网、不自动安装；安装必须得到用户授权。
-- 完整行为与结束条件见 `references/grill-me.md`、`references/find-skills.md`；两个适配入口在 `.agents/skills/`。
+- 完整行为与结束条件见 `references/grill-me.md`、`references/award-topics.md`、`references/find-skills.md`；决策与能力发现适配入口在 `.agents/skills/`。
 
 1. 先读取 `references/stages.md` 与 `references/gates.md`；需要跨 Agent 交接时读取 `references/agents.md`，需要市场/问卷/统计方法时再按任务读取专题文件。不要把整份 README 当作每次启动必读上下文。
 2. 检查用户指定的 `PROJECT_ROOT/state/project.json`，有则读已有状态并接续，**不要重置**。需要创建项目且尚无状态时运行：
@@ -55,7 +57,7 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 ## 工具路由
 
-- 选题与二手资料 → `references/research-design.md`；涉及竞争、市场口径与规模时读 `references/market-research.md`。有获准且可用的外部研究 Skill 时可按需调用；引用原始出处，区分事实/推论/假设。
+- 选题与二手资料 → `references/research-design.md`；撞题与获奖题目密度 → `references/award-topics.md`；涉及竞争、市场口径与规模时读 `references/market-research.md`。有获准且可用的外部研究 Skill 时可按需调用；引用原始出处，区分事实/推论/假设。
 - 问卷/抽样 → `references/survey-quality.md` 与 `references/measurement-and-inference.md`（逐题审核、分析合同、复杂抽样边界）；可选调用 `survey-design`、`zhengdabei-survey-report`，但先统一变量和样本定义。
 - 设计冻结 → 用 `templates/design-manifest.json` 把问卷、变量字典和分析合同列为 `design_manifest` 的依赖文件；设计证据变化后下游验收自动失效。正式报名前还要绑定 `rules_verification`，记录全国/赛区/本校规则的适用范围与来源。
 - 原始问卷 CSV 预检 → 根据真实变量字典修改 `templates/data-preflight-schema.json`，运行 `python "<SKILL_ROOT>/scripts/survey_audit.py" --project "<PROJECT_ROOT>" --data raw_private/<file.csv> --schema plans/<schema.json> --output analysis/data-preflight.json`。退出码 0 仅表示可进入人工复核，3 表示数据合同问题，2 表示输入/执行错误；不修改原数据、不自动删行、不批准阶段。按 `references/measurement-and-inference.md` 处理缺失、反向计分、信效度和推断边界。

@@ -33,6 +33,11 @@ class ReleaseContractTests(unittest.TestCase):
         else:
             self.assertIn("没有 `LICENSE` 文件", readme)
 
+    def test_award_snapshot_is_not_redistributed(self):
+        self.assertFalse((ROOT / "references/award-topics/data.js").exists())
+        baseline = (ROOT / "references/award-topics/baseline.json").read_text(encoding="utf-8")
+        self.assertIn("no raw title rows are bundled", baseline)
+
     def test_competition_pack_warns_against_copying_school_specific_rules(self):
         data = json.loads((ROOT / "competitions/zhengda-17/rules.json").read_text(encoding="utf-8"))
         self.assertEqual(data["season"], "2026-2027")
@@ -48,6 +53,7 @@ class ReleaseContractTests(unittest.TestCase):
             "templates/team-roster.csv",
             "templates/research-brief.md",
             "templates/topic-scorecard.csv",
+            "templates/topic-density-report.md",
             "templates/questionnaire-blueprint.csv",
             "templates/questionnaire-review.csv",
             "templates/analysis-contract.csv",
@@ -106,6 +112,8 @@ class ReleaseContractTests(unittest.TestCase):
         self.assertIn('scripts/stats_basic.py', skill)
         self.assertIn('scripts/power_calc.py', skill)
         self.assertIn('scripts/advisor.py', skill)
+        self.assertIn('scripts/topic_radar.py', skill)
+        self.assertIn('references/award-topics.md', skill)
         self.assertIn('evidence list', skill)
         self.assertIn('rules_verification', skill)
 
@@ -114,8 +122,12 @@ class ReleaseContractTests(unittest.TestCase):
             'scripts/stats_basic.py',
             'scripts/power_calc.py',
             'scripts/advisor.py',
+            'scripts/topic_radar.py',
+            'references/award-topics.md',
+            'references/award-topics/baseline.json',
             'templates/rules-verification.json',
             'templates/grill-log.md',
+            'templates/topic-density-report.md',
             'examples/sample-project/README.md',
             'examples/sample-project/data/sample_survey.csv',
             'examples/sample-project/plans/design-manifest.json',

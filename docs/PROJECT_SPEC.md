@@ -49,6 +49,7 @@
 - `references/`：阶段、方法、质量门禁、隐私和 Agent 协作协议；
 - `scripts/workflow.py`：本地项目初始化、证据登记、依赖清单哈希检查、阶段门禁和人工复核留痕；
 - `scripts/task_queue.py`：本地任务创建、输入快照、认领、提交、复核和返工状态；
+- `scripts/topic_radar.py`：获奖题目聚合基线、显式快照抓取、覆盖矩阵与撞题检索；
 - `state/project.json` 与事件日志：每个研究工作区的状态和事件；
 - `templates/`：选题、问卷、数据、分析、报告、答辩和提交记录模板。
 
