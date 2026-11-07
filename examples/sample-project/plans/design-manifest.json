@@ -1,0 +1,37 @@
+{
+  "description": "DEMO design freeze: replace every artifact before a real project",
+  "files": [
+    {
+      "path": "plans/survey-instrument.md",
+      "sha256": "d0c7e89d29d4fe9decbbc760a1f609066e61dac0a33e8522bdbf315452066a21",
+      "role": "instrument"
+    },
+    {
+      "path": "plans/sampling-plan.md",
+      "sha256": "96bdb657f6bb0021fdf4077846c2a9532b3a807399d204cfe79e54fec5963847",
+      "role": "sampling plan"
+    },
+    {
+      "path": "plans/research-ethics.md",
+      "sha256": "1c6f01aa645498f188e0b6938644e1abc40542556e42cb583d2b3d69fead526b",
+      "role": "ethics"
+    },
+    {
+      "path": "data/dictionary.csv",
+      "sha256": "81e0b99b9221a811ea5199155fcf44de28f9a24823c5885f6bec93dd4e50b4e9",
+      "role": "variable dictionary"
+    },
+    {
+      "path": "plans/analysis-contract.csv",
+      "sha256": "8b462d99878d2bd89f7e62f90859347e62307224a95c86f102ff745eedf6f575",
+      "role": "analysis contract"
+    },
+    {
+      "path": "plans/data-preflight-schema.json",
+      "sha256": "d21f6d6dddd133b1ac68a08ac04acf9a4eb716c8f277ee44996a68bf0d7994aa",
+      "role": "preflight schema"
+    }
+  ],
+  "command": "python -X utf8 scripts/survey_audit.py --project <PROJECT_ROOT> --data raw_private/sample_survey.csv --schema plans/data-preflight-schema.json",
+  "environment": "Python 3.10+ standard library"
+}

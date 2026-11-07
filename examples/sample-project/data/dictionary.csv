@@ -1,0 +1,12 @@
+variable,label,type,values,role,reverse_coding,item_group
+respondent_id,匿名编号,string,DEMO-001..,id,false,
+age,年龄,integer,18-30,descriptive,false,
+gender,性别,string,F/M/Other,descriptive,false,
+q1,过去一个月购买咖啡,integer,0/1,screen,false,
+q2,知道自带杯折扣,integer,0/1/2,descriptive,false,
+q3,2元折扣下重复购买意愿,integer,1-5,outcome,false,
+q4,5元折扣下重复购买意愿,integer,1-5,outcome,false,
+q5,价格敏感度,integer,1-5,covariate,true,
+q6,环保愿意多走2分钟,integer,1-5,covariate,false,
+q7,常购渠道,string,A/B/C/D,descriptive,false,q7
+repeat_intent,重复购买意愿均值,number,1-5,outcome,false,

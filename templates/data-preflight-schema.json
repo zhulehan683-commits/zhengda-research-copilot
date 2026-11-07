@@ -4,7 +4,11 @@
   "missing_values": ["", "NA", "-99"],
   "variables": {
     "respondent_id": {"type": "string", "required": true},
-    "q1": {"type": "integer", "required": true, "min": 1, "max": 5},
-    "q2": {"type": "integer", "required": false, "min": 1, "max": 5}
+    "q1": {"type": "integer", "required": true, "likert_points": 5},
+    "q2": {"type": "integer", "required": false, "likert_points": 5, "reverse_coding": true},
+    "q5_1": {"type": "integer", "item_group": "q5", "allowed_values": [0, 1]},
+    "q5_2": {"type": "integer", "item_group": "q5", "allowed_values": [0, 1]},
+    "q6": {"type": "string", "multi_select_separator": "|",
+            "allowed_values": ["A", "B", "C"]}
   }
 }

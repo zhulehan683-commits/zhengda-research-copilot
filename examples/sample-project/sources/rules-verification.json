@@ -1,0 +1,12 @@
+{
+  "schema": "rules-verification/1",
+  "competition": "zhengda-17",
+  "season": "2026-2027",
+  "verified_at": "2026-11-07",
+  "national_notice_url": "http://www.china-cssc.org/",
+  "school_notice_url": "https://jwc.cufe.edu.cn/info/1101/8225.htm",
+  "scope": "DEMO ONLY：示例使用公开院校公告，不代表本人学校或赛区规则",
+  "conflicts": ["示例日期与真实报名截止可能不同"],
+  "verified_by": "demo",
+  "notes": "该文件只用于演示 gate 的机械结构，不得作为本人规则核验。"
+}

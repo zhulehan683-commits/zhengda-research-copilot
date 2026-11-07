@@ -8,7 +8,8 @@ import sys
 import uuid
 from pathlib import Path
 
-from common import project_root, within, sha, read_json, atomic_json, local_lock, append_event, fail, now
+from common import (project_root, within, sha, read_json, atomic_json, local_lock,
+                    append_event, fail, now, enable_utf8)
 from workflow import STAGES, get_state, state_file
 
 
@@ -159,6 +160,7 @@ def list_tasks(root: Path):
 
 
 def main():
+    enable_utf8()
     p = argparse.ArgumentParser(description=__doc__)
     subs = p.add_subparsers(dest="cmd", required=True)
     for cmd in ["create", "claim", "submit", "review", "list"]:

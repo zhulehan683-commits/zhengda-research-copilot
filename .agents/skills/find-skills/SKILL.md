@@ -1,6 +1,6 @@
 ---
 name: find-skills
-description: Use when finding or installing additional skills for market research, survey statistics, citations, reports, or defense deliverables.
+description: Use when a Zhengda Cup deliverable needs a capability the bundled scripts do not cover, when the user asks whether a skill/tool can do something, or when searching for survey statistics, citation verification, DOCX, PPTX, data visualization, scraping, or spreadsheet capabilities.
 ---
 
 # Find Skills：按研究任务发现能力
@@ -14,6 +14,8 @@ Adapted from Vercel's MIT-licensed find-skills. These instructions are self-cont
 5. Install only within the user's authorized scope. Project default: `npx skills add <owner/repo> --skill <name> -a <agent> -y`. Add `-g` only when the user wants global use. Do not bulk-update other skills or overwrite existing copies silently.
 6. Verify files, native discovery, script execution and model results separately. Text-only work may have no command; record actual execution honestly.
 7. External skills produce bounded artifacts. They do not change the research population, raw data or authoritative stage state. Obtain authorization and remove identifiers before external data processing. Reuse content in the repository only after checking distribution rights and preserving source/license.
+
+Default fast lane: run `python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" find --need "<specific task>"` before promising a capability. Treat its local matches as discovery hints, report remote search as not performed until it actually runs, and never install without user authorization.
 
 The CLI flag `-y` only skips command-line prompts after installation is authorized; it does not grant authority. If npm, network or authorization is unavailable, mark an install as planned/not executed. Recalled offline candidates must be labeled unverified, never reported as search findings.
 

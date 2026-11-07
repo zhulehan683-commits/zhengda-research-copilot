@@ -1,8 +1,10 @@
 import sys
 import os
+import json
 import subprocess
 import tempfile
 import unittest
+from datetime import date, timedelta
 from unittest import mock
 from pathlib import Path
 
@@ -80,12 +82,16 @@ class WorkflowTests(unittest.TestCase):
         p.write_text(text, encoding="utf-8")
         return p
 
-    def bind(self, stage: str, key: str, path: Path, author="team"):
-        return workflow.evidence_add(self.root, stage, key, str(path), author)
+    def bind(self, stage: str, key: str, path: Path, author="team", force=False):
+        return workflow.evidence_add(self.root, stage, key, str(path), author, force=force)
 
     def bind_registration(self):
         notice = self.write("sources/notice.txt")
-        rules = self.write("sources/rules.txt")
+        rules = self.write("sources/rules.json", json.dumps({
+            "verified_at": date.today().isoformat(),
+            "national_notice_url": "https://example.org/national",
+            "school_notice_url": "https://example.org/school",
+        }))
         receipt = self.write("sources/receipt.txt")
         self.bind("registration", "official_notice", notice)
         self.bind("registration", "rules_verification", rules)
@@ -101,6 +107,14 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Cannot pass stage"):
             workflow.review_stage(self.root, "registration", "QA", "pass", "not enough")
 
+    def test_status_suggests_grill_and_find_without_changing_state(self):
+        status = workflow.status(self.root)
+        self.assertEqual(status["next_pending"], "registration")
+        commands = " ".join(status["suggested_actions"])
+        self.assertIn("advisor.py", commands)
+        self.assertIn("find", commands)
+        self.assertNotIn("--stage registration", commands)
+
     def test_gate_and_hash_invalidation(self):
         notice, receipt = self.bind_registration()
         result = workflow.check(self.root, workflow.get_state(self.root), "registration")
@@ -112,7 +126,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertTrue(any("SHA" in x for x in result["reasons"]))
         status = workflow.status(self.root)
         self.assertEqual(status["stages"][0]["effective_status"], "STALE")
-        self.bind("registration", "registration_confirmation", receipt)
+        self.bind("registration", "registration_confirmation", receipt, force=True)
         status = workflow.status(self.root)
         self.assertEqual(status["stages"][0]["status"], "pending")
 
@@ -133,13 +147,17 @@ class WorkflowTests(unittest.TestCase):
         self.bind("knowledge", "exam_result", exam)
         self.pass_stage("knowledge")
         notice.write_text("updated notice", encoding="utf-8")
-        self.bind("registration", "official_notice", notice)
+        self.bind("registration", "official_notice", notice, force=True)
         status = workflow.status(self.root)
         self.assertEqual([s["status"] for s in status["stages"][:2]], ["pending", "pending"])
 
     def test_reviewer_cannot_be_author(self):
         notice = self.write("sources/notice.txt")
-        rules = self.write("sources/rules.txt")
+        rules = self.write("sources/rules.json", json.dumps({
+            "verified_at": date.today().isoformat(),
+            "national_notice_url": "https://example.org/national",
+            "school_notice_url": "https://example.org/school",
+        }))
         receipt = self.write("sources/receipt.txt")
         self.bind("registration", "official_notice", notice, "same")
         self.bind("registration", "rules_verification", rules, "same")
@@ -156,6 +174,95 @@ class WorkflowTests(unittest.TestCase):
     def test_init_never_overwrites(self):
         with self.assertRaisesRegex(ValueError, "refusal to overwrite"):
             workflow.init(self.root, "zhengda-17", "2026-2027")
+
+    def test_existing_evidence_key_is_not_silently_overwritten(self):
+        notice = self.write("sources/notice.txt", "first")
+        self.bind("registration", "official_notice", notice)
+        notice.write_text("second", encoding="utf-8")
+        with self.assertRaisesRegex(workflow.BlockedError, "already bound"):
+            self.bind("registration", "official_notice", notice)
+        unchanged = workflow.get_state(self.root)["stages"]["registration"]["evidence"]["official_notice"]
+        self.assertNotEqual(unchanged["sha256"], workflow.sha(notice))
+
+    def test_force_overwrite_returns_replaced_block_and_invalidates_downstream(self):
+        notice = self.write("sources/notice.txt", "first")
+        self.bind("registration", "official_notice", notice, "first-author")
+        notice.write_text("second", encoding="utf-8")
+        result = workflow.evidence_add(self.root, "registration", "official_notice",
+                                       str(notice), "second-author", force=True)
+        self.assertEqual(result["replaced"]["author"], "first-author")
+        self.assertNotEqual(result["replaced"]["sha256"], result["sha256"])
+        self.assertEqual(result["downstream_invalidated"], True)
+
+    def test_evidence_list_reports_path_hash_and_drift(self):
+        notice = self.write("sources/notice.txt", "first")
+        self.bind("registration", "official_notice", notice)
+        listing = workflow.evidence_list(self.root, "registration")
+        item = next(i for i in listing["items"] if i["key"] == "official_notice")
+        self.assertEqual(item["path"], "sources/notice.txt")
+        self.assertTrue(item["sha256_matches"])
+        notice.write_text("changed", encoding="utf-8")
+        listing = workflow.evidence_list(self.root, "registration")
+        item = next(i for i in listing["items"] if i["key"] == "official_notice")
+        self.assertFalse(item["sha256_matches"])
+        self.assertTrue(any(m["key"] == "rules_verification" for m in listing["missing"]))
+
+    def test_stale_or_incomplete_rules_verification_blocks(self):
+        notice = self.write("sources/notice.txt")
+        self.bind("registration", "official_notice", notice)
+        for label, payload, expected in [
+            ("stale", {"verified_at": (date.today() - timedelta(days=61)).isoformat(),
+                       "national_notice_url": "https://example.org/n",
+                       "school_notice_url": "https://example.org/s"}, "stale"),
+            ("future", {"verified_at": (date.today() + timedelta(days=1)).isoformat(),
+                        "national_notice_url": "https://example.org/n",
+                        "school_notice_url": "https://example.org/s"}, "future"),
+            ("missing-url", {"verified_at": date.today().isoformat()}, "national_notice_url"),
+        ]:
+            with self.subTest(label=label):
+                rules = self.write("sources/rules-" + label + ".json", json.dumps(payload))
+                if label == "stale":
+                    self.bind("registration", "rules_verification", rules)
+                else:
+                    workflow.evidence_add(self.root, "registration", "rules_verification",
+                                          str(rules), "team", force=True)
+                problems = workflow.evidence_problems(
+                    self.root, workflow.get_state(self.root), "registration", date.today())
+                self.assertTrue(any(expected in problem for problem in problems), problems)
+
+    def test_rules_verification_accepts_fresh_markdown_record(self):
+        notice = self.write("sources/notice.txt")
+        self.bind("registration", "official_notice", notice)
+        rules = self.write("sources/rules.md",
+                           f"verified_at: {date.today().isoformat()}\n"
+                           "https://example.org/national\nhttps://example.org/school\n")
+        self.bind("registration", "rules_verification", rules)
+        problems = workflow.evidence_problems(
+            self.root, workflow.get_state(self.root), "registration", date.today())
+        self.assertFalse(any("rules_verification" in problem for problem in problems), problems)
+
+    def test_template_pull_copies_and_refuses_overwrite(self):
+        result = workflow.template_pull(self.root, "analysis-contract.csv")
+        self.assertEqual(result["path"], "plans/analysis-contract.csv")
+        self.assertTrue((self.root / "plans/analysis-contract.csv").is_file())
+        with self.assertRaisesRegex(workflow.BlockedError, "already exists"):
+            workflow.template_pull(self.root, "analysis-contract.csv")
+        result = workflow.template_pull(self.root, "analysis-contract.csv", force=True)
+        self.assertTrue(result["overwritten"])
+
+    def test_evidence_overwrite_cli_returns_three(self):
+        notice = self.write("sources/notice.txt", "first")
+        self.bind("registration", "official_notice", notice)
+        notice.write_text("second", encoding="utf-8")
+        result = subprocess.run([
+            sys.executable, str(ROOT / "scripts/workflow.py"), "evidence", "add",
+            "--project", str(self.root), "--stage", "registration",
+            "--key", "official_notice", "--file", str(notice), "--author", "team",
+        ], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(result.returncode, 3, result.stderr or result.stdout)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["status"], "BLOCKED")
+        self.assertIn("already bound", payload["error"])
 
     def test_raw_dataset_must_live_in_private_directory(self):
         raw = self.write("data/raw_responses.csv", "id,answer\n1,x\n")

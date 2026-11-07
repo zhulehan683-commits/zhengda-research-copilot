@@ -19,6 +19,8 @@
 - `cleaning-report.md`：数据清洗决策与复现记录；
 - `analysis-plan.md`：统计方法、假设、诊断与稳健性计划；
 - `analysis-manifest.json`：列出实际输入、代码、配置、结果和复现命令；
+- `rules-verification.json`：规则核验记录，含 `verified_at`、全国/本校公告 URL；`gate` 校验 60 天时效；
+- `grill-log.md`：记录压力提问的轮次、决策、待核验事实和用户确认；
 - `model-option-comparison.md`：比较候选方法的数据前提、诊断、失败条件和行动价值；
 - `result-matrix.csv`：逐研究问题记录结果、证据、限制与专业判断；
 - `figure-register.csv`：图表来源、样本量、正文插入位置和引用状态；

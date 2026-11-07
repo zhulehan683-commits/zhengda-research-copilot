@@ -142,13 +142,19 @@ flowchart TD
     H -.-> F
 ```
 
-Grill Me 与 Find Skills 是按需入口。研究问题已经明确时直接推进当前工作；缺少专门工具时，再发现和接入外部能力。
+Grill Me 与 Find Skills 现在各有默认触发点：选题打分、设计冻结、分析合同和答辩定稿前先跑一次 3 问快速压力测试；当前交付缺少专门工具时先扫本地技能。研究问题已经明确且不需要外部能力时，直接推进当前工作。
 
 ## Grill Me：先把研究方案问清楚
 
 Grill Me 用于压力测试选题、抽样、问卷或分析决定。项目整合了 [Matt Pocock 的 grill-me / grilling](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336/skills/productivity)：上游 `grill-me` 是入口，`grilling` 提供分轮访谈方法；本项目提供可直接执行的研究适配版。
 
 它先读取已有材料，区分已知事实、用户已作决定、待查事实和待作决定，再按依赖关系提问。同一轮只覆盖前置条件已确定的问题，每问附建议与理由，收到用户答复后再展开依赖问题。
+
+```powershell
+python -X utf8 scripts/advisor.py grill --stage design --project $project --quick
+```
+
+快速版只问 3 个问题；答案暴露新依赖时再跑完整阶段问题。`--write` 可把本轮问题写入 `plans/grill-<stage>-<timestamp>.md`，不修改项目状态。
 
 ```text
 使用正大杯研策，grill me。
@@ -168,6 +174,12 @@ Grill Me 用于压力测试选题、抽样、问卷或分析决定。项目整�
 ## Find Skills：按具体任务补足能力
 
 Find Skills 用于发现当前工作真正缺少的专门能力，例如文献核验、统计诊断、DOCX 报告导出或答辩材料制作。项目整合了 [Vercel 的 find-skills](https://github.com/vercel-labs/skills/blob/13e4063a1cf913f5606d57d42ab83a86f5001e04/skills/find-skills/SKILL.md)，并增加研究语境、项目级安装和离线处理规则。
+
+```powershell
+python -X utf8 scripts/advisor.py find --need "问卷 统计分析"
+```
+
+该命令只扫描本地技能并打印 `npx skills find` 命令，不自动联网、不自动安装；本地候选与远端候选分开报告。
 
 ```text
 使用正大杯研策的 Find Skills。
@@ -210,6 +222,8 @@ Find Skills 用于发现当前工作真正缺少的专门能力，例如文献�
 
 `workflow.py` 管理项目状态、证据登记、阶段检查与复核记录。其机械检查关注文件、路径、哈希、清单和前序条件；研究方法是否合理、调查是否真实、结论是否越界，仍需要专业判断。
 
+已存在的证据键默认**拒绝覆盖**；确需替换时使用 `--force`，返回的 `replaced` 块保留旧路径、SHA-256、作者和时间。`evidence list --stage <阶段>` 可直接核对当前绑定，避免靠打开 `state/project.json` 恢复事故。`rules_verification` 还必须含核验日期与全国/本校公告 URL，超过 60 天会被阻断。
+
 因此，文件存在、门禁通过、复核记录和研究质量是不同层次。复核者署名用于留痕，脚本不认证其真实身份或审查质量。七维评分用于汇总选题、文献、设计、调查、分析、报告与创新方面的意见，不代替阶段放行。
 
 ### CSV 数据合同预检
@@ -217,6 +231,12 @@ Find Skills 用于发现当前工作真正缺少的专门能力，例如文献�
 `survey_audit.py` 根据真实变量字典对应的 schema 检查必填缺失、类型、数值范围、离散允许值、重复标识和 CSV 列结构。输出保留汇总诊断与输入哈希，原始文件保持不变。
 
 Schema 对未知字段和未实现约束采用严格拒绝方式，避免“写了规则但实际未检查”。预检不自动剔除样本、不计算信效度或显著性，`READY_FOR_REVIEW` 只表示可进入人工复核。
+
+新版 schema 支持 `item_group`（同题多列）、`reverse_coding`（只提示不改数）、`likert_points`（1..N 简写）与 `multi_select_separator`（一格多值）。问卷星、腾讯问卷和 Credamo 的导出对照见 [SURVEY_EXPORTS.md](docs/SURVEY_EXPORTS.md)。
+
+### 基础统计与样本量
+
+`stats_basic.py` 提供描述统计、置信区间、t 检验、卡方/Fisher、Cronbach's α、OLS 与二元 Logit；`power_calc.py` 提供比例、均值差和卡方的样本量/功效近似。两者都只用 Python 标准库，并显式声明近似条件与不支持的方法。完整示例见 [docs/COMMANDS.md](docs/COMMANDS.md)。
 
 ### 多 Agent 交接
 
@@ -290,22 +310,9 @@ Schema 对未知字段和未实现约束采用严格拒绝方式，避免“写�
 
 写作和展示时遵循一条固定链路：**研究问题 → 数据与样本 → 方法与前提 → 结果与诊断 → 结论边界 → 行动建议**。缺少任何一环时，先在结果矩阵中标注“待补”或“限制”，不要把展示语言当作证据补齐。
 
-## 命令速查
+## 命令与工具
 
-以下命令假设研究目录已赋值给 `$project`，并且从主技能根目录或使用脚本绝对路径运行。命令只做登记、检查和预检，不自动执行现实调查，也不自动批准阶段。
-
-| 场景 | 命令 | 结果判断 |
-| --- | --- | --- |
-| 新建研究项目 | `python scripts/workflow.py init --project $project --competition zhengda-17 --season 2026-2027` | 创建 13 阶段状态；已有项目会被拒绝覆盖 |
-| 查看阶段状态 | `python scripts/workflow.py status --project $project` | 输出各阶段状态、证据与待办门禁 |
-| 登记证据文件 | `python scripts/workflow.py evidence add --project $project --stage <阶段> --key <证据键> --file <项目内文件>` | 记录文件路径与哈希；脚本拒绝项目外和符号链接路径 |
-| 检查阶段门禁 | `python scripts/workflow.py gate --project $project --stage <阶段>` | `0` 表示机械检查通过，`3` 表示阻断，`2` 表示输入错误 |
-| 记录独立复核 | `python scripts/workflow.py review --project $project --stage <阶段> --reviewer <复核者> --decision pass --note <意见>` | 复核记录用于留痕；通过与放行仍需协调者核实 |
-| 预检 CSV 合同 | `python scripts/survey_audit.py --project $project --data raw_private/survey.csv --schema plans/data-schema.json --output analysis/data-preflight-01.json` | `0` 表示可人工复核，`3` 表示合同问题 |
-| 创建/提交交接任务 | `python scripts/task_queue.py --help` | 状态含 `STALE_*` 时先核对输入、验收或输出变化 |
-| 汇总七维复核 | `python scripts/score_review.py --help` | 评分只汇总意见，不替代门禁与研究判断 |
-
-首次使用时优先执行 `status` 而不是重新初始化；升级或迁移安装副本后，先运行 `python install.py --verify`，再在研究目录执行 `status` 确认旧状态可读。更多错误码、路径规则和故障恢复见[安装指南](docs/INSTALLATION.md)。
+完整命令参考见 [docs/COMMANDS.md](docs/COMMANDS.md)，涵盖项目状态、证据覆盖保护、模板复制、CSV 预检、基础统计/样本量，以及 Grill Me 与 Find Skills 快速入口。首次使用时优先执行 `status` 而不是重新初始化；升级或迁移安装副本后，先运行 `python install.py --verify`。
 
 ## 安装与适配
 
@@ -372,50 +379,9 @@ python install.py --target-root D:\AgentSkills --agent-root "$HOME\.agents\skill
 
 ## 用本地工具核对真实材料
 
-以下命令从主技能根目录执行；从其他目录运行时使用脚本绝对路径。研究工作区应与技能安装目录分开。
-
-### 初始化与接续
-
-```powershell
-$project = 'D:\Competitions\MySurvey'
-python scripts/workflow.py init --project $project
-python scripts/workflow.py status --project $project
-```
-
-初始化会建立研究目录和 13 阶段状态。`init` 拒绝覆盖已有项目，恢复时直接执行 `status`。当前脚本内置 `zhengda-17 / 2026-2027` 配置；其他赛事或届次需要先加入经过核验的配置。
+初始化、CSV 预检、基础统计、样本量与命令导航见 [docs/COMMANDS.md](docs/COMMANDS.md)。研究工作区应与技能安装目录分开；`init` 拒绝覆盖已有项目，恢复时直接执行 `status`。
 
 工作区按职责分开：`sources/` 保存来源材料，`plans/` 保存研究设计，`raw_private/` 保存私有原始数据，`data/` 与 `analysis/` 保存分析数据和产物，`report/`、`defense/` 保存交付材料，`state/` 与 `tasks/` 保存状态和交接记录。
-
-### CSV 预检
-
-1. 将获准的原始 CSV 放入研究工作区 `raw_private/`。
-2. 按真实变量字典修改[预检合同模板](templates/data-preflight-schema.json)，保存为 `plans/data-schema.json`。
-3. 执行预检，选择尚不存在的输出文件名：
-
-```powershell
-python scripts/survey_audit.py --project $project --data raw_private/survey.csv --schema plans/data-schema.json --output analysis/data-preflight-01.json
-```
-
-| 退出码 | 含义 | 后续动作 |
-| --- | --- | --- |
-| `0` | `READY_FOR_REVIEW` | 进入人工复核，继续检查样本、测量和分析条件 |
-| `3` | `BLOCKED` | 处理数据合同问题，解释或修正后重新预检 |
-| `2` | 输入或执行错误 | 核对路径、schema、编码和输出文件是否已存在 |
-
-输出只在 `analysis/` 内新建。重复运行使用新的文件名，原始数据和已有诊断不会被覆盖。
-
-### 命令导航
-
-| 需求 | 入口 |
-| --- | --- |
-| 查看项目状态 | `python scripts/workflow.py status --project <研究目录>` |
-| 证据登记、阶段检查与复核 | `python scripts/workflow.py --help`、[质量门禁](references/gates.md) |
-| 输入快照、执行回执与任务签收 | `python scripts/task_queue.py --help`、[协作协议](references/agents.md) |
-| CSV 预检参数 | `python scripts/survey_audit.py --help` |
-| 七维评分汇总 | `python scripts/score_review.py --help`、[角色与复核](references/roles-and-review.md) |
-| 选择研究模板 | [模板索引](templates/README.md) |
-
-`workflow.py gate` / `review` 的阻断或复核不通过返回 `3`，输入错误返回 `2`。签收任务时检查真实文件和验收记录，而不仅是进程是否启动或退出。
 
 ## 项目结构
 
@@ -453,7 +419,7 @@ zhengda-research-copilot/
 | 有限模型场景 | 经 Magpie 进行独立审计、研究入口文本场景模拟 | 仅覆盖记录中的输入和环境 |
 | 客户端运行 | 按产品分别确认发现、脚本和模型任务 | 不能由文件校验推定全部客户端已加载 |
 
-最近一次整合的维护者记录包含 **68 项本地测试：67 通过、1 项因 Windows 符号链接权限跳过**，以及主副本和 CodeBuddy 目标各 **86 个文件**校验。它们是具体版本与环境下的记录，最新内容和限制见[验证记录](docs/VALIDATION.md)。
+最近一次整合的维护者记录包含 **101 项本地测试：100 通过、1 项因 Windows 符号链接权限跳过**，以及主副本与适配目标逐文件 manifest 校验。它们是具体版本与环境下的记录，最新内容和限制见[验证记录](docs/VALIDATION.md)。
 
 在**完整源码仓库**根目录可运行：
 
@@ -480,6 +446,8 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | 各阶段要交什么材料 | [阶段地图](references/stages.md)、[质量门禁](references/gates.md) |
 | 问卷、抽样与测量 | [问卷与抽样](references/survey-quality.md)、[测量与推断](references/measurement-and-inference.md) |
 | 分析方法与复现 | [方法路由](references/method-routing.md)、[统计复现](references/analysis.md)、[方案比较模板](templates/model-option-comparison.md) |
+| 全部 CLI 命令与示例项目 | [命令参考](docs/COMMANDS.md)、[示例项目](examples/sample-project/README.md) |
+| 问卷星/腾讯问卷/Credamo 导出 | [导出对照](docs/SURVEY_EXPORTS.md) |
 | 报告、图表与答辩 | [可视化](references/visualization-guide.md)、[报告生产](references/report-production.md)、[报告与答辩](references/report-defense.md) |
 | 模板选择与填写 | [模板索引](templates/README.md) |
 | 技能来源、原文与适配差异 | [整合记录](docs/SKILL_INTEGRATION.md)、[第三方声明](THIRD_PARTY_NOTICES.md)、[来源锁文件](docs/upstreams.lock.json) |

@@ -19,11 +19,14 @@ FILES = ('SKILL.md', 'README.md', 'CODEX_START.md', 'install.py', 'install.ps1',
          'THIRD_PARTY_NOTICES.md', 'LICENSE-DECISION.md', 'SECURITY.md',
          'CHANGELOG.md', 'CONTRIBUTING.md', 'LICENSE')
 DIRECTORIES = ('scripts', 'references', 'templates', 'competitions', 'licenses', 'agents', 'docs',
-               '.agents/skills')
+               'examples', '.agents/skills')
 REQUIRED = ('SKILL.md', 'scripts/workflow.py', 'scripts/task_queue.py',
             'scripts/survey_audit.py', 'scripts/common.py', 'scripts/score_review.py',
+            'scripts/stats_basic.py', 'scripts/power_calc.py', 'scripts/advisor.py',
             'references/stages.md', 'references/gates.md',
             'competitions/zhengda-17/rules.json', 'THIRD_PARTY_NOTICES.md',
+            'templates/rules-verification.json', 'templates/grill-log.md',
+            'examples/sample-project/README.md',
             '.agents/skills/grill-me/SKILL.md', '.agents/skills/grilling/SKILL.md',
             '.agents/skills/find-skills/SKILL.md',
             'references/upstream-skills/grill-me/SKILL.md',
@@ -211,6 +214,9 @@ def install(source: Path, canonical_root: Path, *, agent_roots=(), mode='link',
 
 
 def main() -> int:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8', errors='replace')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target-root', type=Path, default=Path.home() / '.agents/skills',
                         help='Canonical skills directory, including a D: directory if preferred')

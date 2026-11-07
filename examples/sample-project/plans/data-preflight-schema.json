@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "id_column": "respondent_id",
+  "missing_values": ["", "NA", "-99"],
+  "variables": {
+    "respondent_id": {"type": "string", "required": true},
+    "age": {"type": "integer", "required": true, "min": 18, "max": 30},
+    "gender": {"type": "string", "required": false, "allowed_values": ["F", "M", "Other"]},
+    "q1": {"type": "integer", "required": true, "allowed_values": [0, 1]},
+    "q2": {"type": "integer", "required": true, "allowed_values": [0, 1, 2]},
+    "q3": {"type": "integer", "required": true, "likert_points": 5},
+    "q4": {"type": "integer", "required": true, "likert_points": 5},
+    "q5": {"type": "integer", "required": true, "likert_points": 5, "reverse_coding": true},
+    "q6": {"type": "integer", "required": true, "likert_points": 5},
+    "q7": {"type": "string", "required": false, "multi_select_separator": "|",
+            "allowed_values": ["A", "B", "C", "D"]},
+    "repeat_intent": {"type": "number", "required": true, "min": 1, "max": 5}
+  }
+}

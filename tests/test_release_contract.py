@@ -103,6 +103,35 @@ class ReleaseContractTests(unittest.TestCase):
         self.assertIn('references/grill-me.md', skill)
         self.assertIn('references/find-skills.md', skill)
         self.assertIn('scripts/survey_audit.py', skill)
+        self.assertIn('scripts/stats_basic.py', skill)
+        self.assertIn('scripts/power_calc.py', skill)
+        self.assertIn('scripts/advisor.py', skill)
+        self.assertIn('evidence list', skill)
+        self.assertIn('rules_verification', skill)
+
+    def test_execution_layer_examples_and_fast_lanes_exist(self):
+        required = [
+            'scripts/stats_basic.py',
+            'scripts/power_calc.py',
+            'scripts/advisor.py',
+            'templates/rules-verification.json',
+            'templates/grill-log.md',
+            'examples/sample-project/README.md',
+            'examples/sample-project/data/sample_survey.csv',
+            'examples/sample-project/plans/design-manifest.json',
+        ]
+        for rel in required:
+            with self.subTest(path=rel):
+                self.assertTrue((ROOT / rel).is_file(), rel)
+        readme = (ROOT / 'examples/sample-project/README.md').read_text(encoding='utf-8')
+        self.assertIn('不得用于参赛', readme)
+
+    def test_text_templates_and_examples_use_lf(self):
+        for base in [ROOT / 'templates', ROOT / 'examples']:
+            for path in base.rglob('*'):
+                if path.is_file() and path.suffix.lower() in {'.md', '.csv', '.json', '.txt'}:
+                    with self.subTest(path=str(path.relative_to(ROOT))):
+                        self.assertNotIn(b'\r\n', path.read_bytes())
 
     def test_bundled_skill_snapshots_match_pinned_sources(self):
         lock = json.loads((ROOT / 'docs/upstreams.lock.json').read_text(encoding='utf-8'))

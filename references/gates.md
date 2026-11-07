@@ -6,6 +6,18 @@
 
 `design_manifest` 与 `analysis_manifest` 是依赖清单：除清单文件自身的哈希外，脚本还会核验清单列出的问卷、变量字典、分析合同、输入数据、代码、配置和结果文件。修改清单中的任一依赖都会使对应阶段失效；清单只证明列出的文件没变，不证明代码正确、运行环境可复现或分析结论有效。`rules_verification` 必须先记录全国/赛区/本校通知的适用范围、来源、核验日期和冲突项，不能用他校通知代替本人适用规则。
 
+`rules_verification` 的机械格式（推荐 JSON，模板 `templates/rules-verification.json`）：
+
+```json
+{"verified_at": "2026-11-07",
+ "national_notice_url": "https://...",
+ "school_notice_url": "https://..."}
+```
+
+Markdown 记录也可被接受，但必须含 `verified_at: YYYY-MM-DD` 和至少两个公告 URL。`gate` 会拒绝未来日期，以及距核验日超过 60 天的记录；改日期而不重新核验属于伪造证据。
+
+证据键默认**拒绝覆盖**。`evidence add` 遇到已存在的键且路径或哈希不同，会返回退出码 3 并列出旧绑定；确需替换时加 `--force`，响应中的 `replaced` 块保留旧路径、SHA-256、作者与时间。用 `evidence list --stage <stage>` 核对当前绑定，不必手工读 `state/project.json`。
+
 `workflow.py review` 记录独立复核结果，传入审查者称呼与证据说明。该记录仅证明**有人填写了记录**，不自动证明身份或结论有效。`gate` / `review` 的退出码：0 为命令执行并得到通过或普通状态，3 为阶段被阻断/复核不通过，2 为输入或执行错误；调用方必须同时读取 JSON 的 `status`，不能只看退出码。
 
 ## 专业复核清单

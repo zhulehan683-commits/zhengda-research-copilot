@@ -12,6 +12,8 @@
 
 另有两项协作技能：Matt Pocock 的 `grill-me` / `grilling` 与 Vercel 的 `find-skills` 在 `.agents/skills/` 提供研究适配入口，分别通过 `references/grill-me.md`、`references/find-skills.md` 接入。上游原文另存于 `references/upstream-skills/`，与适配入口一同分发；缺少原生调用工具时读取适配入口。来源和差异见 `docs/SKILL_INTEGRATION.md`。
 
+两个入口的低摩擦命令由 `scripts/advisor.py` 提供：`grill` 在选题/设计/分析/报告/答辩前生成 3 问快速版；`find` 扫描本地技能并打印生态检索命令。两者都只读，不修改项目状态、不自动联网或安装。
+
 ## 可选外部 Skill（未合并部分不随本项目打包）
 
 本表用于按任务路由到可选参考项目。表中未合并部分不是内置依赖，不随本项目自动注册、调用或验证。开始使用前，应查看目标仓库当前版本、入口文件、依赖、许可证和数据权限要求。
@@ -31,7 +33,7 @@
 
 1. 先识别当前阶段和需要的产物，再选择最少必要的子 Skill；不要因为可安装就全部安装。
 2. 只使用当前环境中确实可发现、可执行且获准访问所需数据的工具。不可用时回退到本项目的参考文档与人工步骤，并如实报告。
-3. 选题与二手资料优先使用 `conduct-market-research`；问卷和抽样优先参考 `survey-design` 与 `market-research`；问卷统计可参考 `questionnaire-analysis` 和 `survey-research`；统计结论需独立复现。方法选择细节优先使用本项目内置的 `references/method-routing.md`。
+3. 选题与二手资料优先使用 `conduct-market-research`；问卷和抽样优先参考 `survey-design` 与 `market-research`；问卷统计可参考 `questionnaire-analysis` 和 `survey-research`；基础描述/推断先用内置 `scripts/stats_basic.py`，统计结论仍需独立复现。方法选择细节优先使用本项目内置的 `references/method-routing.md`。
 4. 子 Skill 不得自行改变研究总体、关键变量定义、原始数据或权威项目状态；交付隔离产物、来源、执行命令和 SHA-256，由主控协调者审查。
 5. 已合并内容及完整版权/许可见 `THIRD_PARTY_NOTICES.md` 与 `licenses/`，来源固定版本见 `docs/upstreams.lock.json`。未列入合并清单的项目仅作外部参考；不能将一个仓库的根许可证自动套到所有子工具。
 6. 当届官方规则优先于学校/赛区通知，学校/赛区通知只适用于对应参赛单位，经验类 Skill 不能替代规则。

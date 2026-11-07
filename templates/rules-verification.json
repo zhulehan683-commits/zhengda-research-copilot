@@ -1,0 +1,13 @@
+{
+  "schema": "rules-verification/1",
+  "competition": "zhengda-17",
+  "season": "2026-2027",
+  "verified_at": "YYYY-MM-DD",
+  "national_notice_url": "https://",
+  "school_notice_url": "https://",
+  "region_notice_url": "",
+  "scope": "说明适用于本人组别、赛区和学校的范围",
+  "conflicts": [],
+  "verified_by": "填写核验人",
+  "notes": "60 天后 gate 会要求重新核验；模板日期必须替换。"
+}

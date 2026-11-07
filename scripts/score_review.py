@@ -14,6 +14,8 @@ import math
 import sys
 from pathlib import Path
 
+from common import enable_utf8
+
 DIMENSIONS = (
     "topic", "literature", "design", "fieldwork", "analysis", "report", "innovation"
 )
@@ -102,6 +104,7 @@ def evaluate(data: dict) -> dict:
 
 
 def main() -> int:
+    enable_utf8()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("review", help="UTF-8 JSON review; see templates/review-rubric.json")
     args = parser.parse_args()

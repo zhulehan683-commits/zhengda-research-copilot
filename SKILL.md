@@ -15,6 +15,19 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 先识别本轮模式：用户明确要压力提问时读 `references/grill-me.md`；要寻找或接入外部能力时读 `references/find-skills.md`。这两个模式及单次咨询只读相关材料，不自动初始化目录。用户要求建立项目或需要持久化研究产物时再执行下列项目启动步骤。
 
+## 两个高频入口（默认动作）
+
+这两个入口不是“等用户说出专用动词”才用；在下列时点默认先跑一次，成本低、能提前暴露返工：
+
+| 时点 | 默认动作 | 一条命令 |
+|---|---|---|
+| 选题打分前、设计冻结前、分析合同冻结前 | 先做 3 问快速压力测试；有分歧再展开完整轮次 | `python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" grill --stage design --project "<PROJECT_ROOT>" --quick` |
+| 用户问“有没有工具/skill 能做 X”、或某产物只能靠口头描述 | 先扫本地技能，再给生态检索命令；不要凭记忆报能力 | `python -X utf8 "<SKILL_ROOT>/scripts/advisor.py" find --need "问卷 统计分析"` |
+
+- `grill` 只生成当前可回答的问题和建议答案，不改项目状态；用户确认后才把结论写入 Intake、抽样计划或分析合同。
+- `find` 默认只读本地技能目录并打印 `npx skills find` 命令，不自动联网、不自动安装；安装必须得到用户授权。
+- 完整行为与结束条件见 `references/grill-me.md`、`references/find-skills.md`；两个适配入口在 `.agents/skills/`。
+
 1. 先读取 `references/stages.md` 与 `references/gates.md`；需要跨 Agent 交接时读取 `references/agents.md`，需要市场/问卷/统计方法时再按任务读取专题文件。不要把整份 README 当作每次启动必读上下文。
 2. 检查用户指定的 `PROJECT_ROOT/state/project.json`，有则读已有状态并接续，**不要重置**。需要创建项目且尚无状态时运行：
    `python "<SKILL_ROOT>/scripts/workflow.py" init --project "<PROJECT_ROOT>" --competition zhengda-17 --season 2026-2027`
@@ -32,6 +45,10 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 
 - 每个阶段输出：已完成事实、缺口、输入与产物、证据路径、下一闸门；参考 `references/stages.md`。
 - 使用 `python "<SKILL_ROOT>/scripts/workflow.py" status --project "<PROJECT_ROOT>"` 查看进度；`evidence add` 绑定本地真实材料，`gate` 做机械审核，`review` 记录独立审查结论。**仅有文件存在或 AI 给高分，不代表科学性通过**。`gate`/`review` 退出码 3 表示阻断或复核不通过，2 表示输入/执行错误。
+- `status` 会返回 `suggested_actions`：下一阶段属于选题/设计/分析/报告/答辩时，直接给出 `advisor.py grill --quick` 命令；需要外部能力时给出 `advisor.py find` 命令。
+- 已存在的证据键默认拒绝覆盖；确需替换时用 `evidence add --force`，返回的 `replaced` 块会列出旧路径、哈希、作者和时间。用 `evidence list --project "<PROJECT_ROOT>" --stage "<STAGE>"` 查看当前绑定，不必打开 `state/project.json`。
+- `rules_verification` 必须是带 `verified_at`、`national_notice_url`、`school_notice_url` 的记录（推荐 `templates/rules-verification.json`）；超过 60 天未复核会被 `gate` 阻断。
+- 从模板起步用 `python "<SKILL_ROOT>/scripts/workflow.py" template --project "<PROJECT_ROOT>" --name analysis-contract.csv`，避免手抄路径。
 - 用户只需要一个阶段时仅执行该阶段，不强制完成全部十三个阶段。知识赛练习不得替代本人网考。没有真实调查数据，只能做设计、问卷、变量字典、代码框架；不得生成可冒充参赛结果的统计数字。
 - 单阶段咨询或草稿可以独立完成并留在工作区；全流程脚本的阶段 `passed` 仍要求前序证据通过。不要为了单阶段任务修改前序状态或重置已有项目。
 - 目标产物：研究计划、文献证据表、调查工具与抽样方案、真实调查记录、清洗代码和数据、可复核统计结果、报告、答辩 PPT/讲稿/模拟问答与提交记录。
@@ -43,13 +60,14 @@ description: Use when preparing for Zhengda Cup (正大杯), a university market
 - 设计冻结 → 用 `templates/design-manifest.json` 把问卷、变量字典和分析合同列为 `design_manifest` 的依赖文件；设计证据变化后下游验收自动失效。正式报名前还要绑定 `rules_verification`，记录全国/赛区/本校规则的适用范围与来源。
 - 原始问卷 CSV 预检 → 根据真实变量字典修改 `templates/data-preflight-schema.json`，运行 `python "<SKILL_ROOT>/scripts/survey_audit.py" --project "<PROJECT_ROOT>" --data raw_private/<file.csv> --schema plans/<schema.json> --output analysis/data-preflight.json`。退出码 0 仅表示可进入人工复核，3 表示数据合同问题，2 表示输入/执行错误；不修改原数据、不自动删行、不批准阶段。按 `references/measurement-and-inference.md` 处理缺失、反向计分、信效度和推断边界。
 - 清洗、统计建模、复现 → `references/analysis.md` 与 `references/method-routing.md`（方法路由、最小输入与失败降级）；用 `templates/analysis-manifest.json` 把实际输入、代码、配置和结果绑定为 `analysis_manifest`。可选调用 `survey-research`、`questionnaire-analysis`、`statistical-analysis`。仅使用已安装且可发现的外部 Skill；没安装就按本流程独立工作，不捏造能力。
+- 基础统计直接用 `scripts/stats_basic.py`（描述、t、卡方/Fisher、α、OLS、Logit）和 `scripts/power_calc.py`（样本量/功效近似）；复杂方法按 `references/analysis.md` 的边界交给用户自备环境，不声称本仓库已实现。
 - 文本分析 → `references/text-analysis.md`。**条件能力**：只在存在真实、相关、可追溯且合规的文本时启用；只有结构化问卷时不做词云，词云只是高频词入口图，不能单独作为需求、情绪或因果结论。
 - 图表 → `references/visualization-guide.md`；每张图必须有图号、标题、来源、样本量、单位、图后解释与对应研究问题。
 - 报告与答辩 → `references/report-defense.md` 与 `references/report-production.md`（篇幅预算、图表交付契约）；报告引用真实计算结果，演示材料来自已核查报告。每个核心研究问题至少绑定一张可追溯的表或图。
 - 竞赛规则/学术诚信/数据隐私 → `references/gates.md`；一切冲突由当届官方规则优先裁决。
 - 需要拆分研究、分析、写作与复核职责时 → `references/roles-and-review.md`；其角色与检查点映射到本项目的 13 阶段，项目状态始终由本项目管理。
-- 用户要求“拷问/压力测试/grill me”研究决策时 → `references/grill-me.md`：分轮只问前置已定的问题，给出建议答案，达成共识前不改项目状态。
-- 用户想寻找外部 skill 或扩展能力时 → `references/find-skills.md`：先本地后生态，核验来源与许可证；并入仓库前必须固定 commit 并登记第三方声明。
+- 用户要求“拷问/压力测试/grill me”研究决策，或走到选题/设计/分析冻结点时 → `references/grill-me.md`：可用 `scripts/advisor.py grill` 生成当前前沿问题；分轮只问前置已定的问题，给出建议答案，达成共识前不改项目状态。
+- 用户想寻找外部 skill 或扩展能力，或当前产物缺少专门工具时 → `references/find-skills.md`：可用 `scripts/advisor.py find` 先扫本地，再按需联网；核验来源与许可证；并入仓库前必须固定 commit 并登记第三方声明。
 
 这两个指南接入 `.agents/skills/` 下的研究适配入口；入口可直接执行，不要求原生 Skill 工具或子 Agent。上游 `grill-me` 及其 `grilling` 依赖的完整原文保存在 `references/upstream-skills/`，仅用于来源对照；实际执行采用研究适配规则。客户端未发现子技能时直接读取适配入口，不把文件可读误报为原生加载。
 

@@ -1,0 +1,4 @@
+id,title,publisher,publication_date,url,retrieved_at,source_type,method,scope,metric_definition,reliability,used_for,limitations
+S1,第十七届赛事通知,中央财经大学教务处,2026-10-09,https://jwc.cufe.edu.cn/info/1101/8225.htm,2026-11-07,official-notice,公告检索,院校规则,不适用,中,规则交叉核验,仅代表该校
+S2,中国商业统计学会官网,中国商业统计学会,2026-10-17,http://www.china-cssc.org/,2026-11-07,official-site,官网浏览,全国赛事,不适用,中,赛事来源,需继续核对当届通知
+S3,自带杯折扣与重复购买（模拟文献）,演示期刊,2025-06-01,https://example.org/demo-paper,2026-11-07,simulated,示例,消费行为,购买意愿1-5分,低,变量设计参考,不是真实文献

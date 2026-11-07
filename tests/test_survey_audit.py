@@ -138,3 +138,74 @@ class SurveyAuditTests(unittest.TestCase):
             result = self.run_cli('--output', relative)
             self.assertEqual(result.returncode, 2)
             self.assertEqual(target.read_text(), '{"important": true}')
+
+    def test_likert_points_expand_and_reverse_coding_is_reported_only(self):
+        self.schema.write_text(json.dumps({
+            'id_column': 'id',
+            'variables': {
+                'id': {'type': 'string', 'required': True},
+                'q1': {'type': 'integer', 'required': True, 'likert_points': 5},
+                'q2': {'type': 'integer', 'required': True, 'likert_points': 5,
+                       'reverse_coding': True},
+            },
+        }), encoding='utf-8')
+        self.data.write_text('id,q1,q2\na,6,2\nb,4,5\n', encoding='utf-8')
+        before = self.data.read_bytes()
+        result = self.audit()
+        self.assertEqual(result['status'], 'BLOCKED')
+        self.assertEqual(result['variables']['q1']['disallowed'], 1)
+        self.assertIn('reverse_coding_declared',
+                      [issue['code'] for issue in result['issues']])
+        self.assertEqual(before, self.data.read_bytes())
+        self.assertIn('No automatic row removal or reverse scoring.',
+                      result['limitations'])
+
+    def test_item_group_all_missing_counts_once_and_does_not_duplicate(self):
+        self.schema.write_text(json.dumps({
+            'id_column': 'id',
+            'variables': {
+                'id': {'type': 'string', 'required': True},
+                'q5_1': {'type': 'integer', 'required': True, 'item_group': 'q5',
+                         'allowed_values': [0, 1]},
+                'q5_2': {'type': 'integer', 'required': True, 'item_group': 'q5',
+                         'allowed_values': [0, 1]},
+            },
+        }), encoding='utf-8')
+        self.data.write_text('id,q5_1,q5_2\na,,\nb,1,0\nc,0,1\n', encoding='utf-8')
+        result = self.audit()
+        self.assertEqual(result['item_groups']['q5']['rows_all_missing'], 1)
+        group_issues = [i for i in result['issues'] if i.get('item_group') == 'q5']
+        self.assertEqual(len(group_issues), 1)
+        self.assertEqual(group_issues[0]['count'], 1)
+        self.assertEqual(result['status'], 'BLOCKED')
+
+    def test_multi_select_separator_validates_each_token(self):
+        self.schema.write_text(json.dumps({
+            'variables': {
+                'q7': {'type': 'string', 'multi_select_separator': '|',
+                       'allowed_values': ['A', 'B', 'C']},
+            },
+        }), encoding='utf-8')
+        self.data.write_text('q7\nA|C\nA|Z\nB\n', encoding='utf-8')
+        result = self.audit()
+        self.assertEqual(result['variables']['q7']['valid'], 2)
+        self.assertEqual(result['variables']['q7']['disallowed'], 1)
+        self.assertEqual(result['status'], 'BLOCKED')
+
+    def test_invalid_new_schema_combinations_rejected(self):
+        self.data.write_text('id,q1,age\na,3,20\n')
+        invalid = [
+            {'variables': {'q1': {'type': 'integer', 'likert_points': 5,
+                                    'allowed_values': [1, 2, 3, 4, 5]}}},
+            {'variables': {'q1': {'type': 'integer', 'reverse_coding': 'yes',
+                                    'min': 1, 'max': 5}}},
+            {'variables': {'q1': {'type': 'integer', 'item_group': '  '}}},
+            {'variables': {'q1': {'type': 'string', 'multi_select_separator': '|'}}},
+            {'variables': {'q1': {'type': 'integer', 'likert_points': 1}}},
+            {'variables': {'q1': {'type': 'integer', 'likert_points': 5,
+                                    'min': 1}}},
+        ]
+        for schema in invalid:
+            with self.subTest(schema=schema), self.assertRaises(ValueError):
+                self.schema.write_text(json.dumps(schema))
+                self.audit()

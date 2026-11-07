@@ -1,0 +1,3 @@
+question_id,hypothesis,analysis_unit,population,recruitment,exposure_or_group,outcome,measurement_scale,main_method,estimand,missing_policy,exclusion_policy,diagnostics,multiplicity,validation,sensitivity,planned_or_exploratory,code_path,limitations
+Q1,折扣力度越高重复购买意愿越高,respondent,本校咖啡消费者,便利渠道,折扣力度(2元/5元),重复购买意愿,1-5 ordinal,paired t / Wilcoxon,均值差,成对完整,筛选题未通过者排除,分布与差值检查,单主假设,独立复核,改用符号检验,planned,scripts/analysis_q1.py,便利样本不可外推
+Q2,价格敏感度调节折扣效果,respondent,本校咖啡消费者,便利渠道,折扣×价格敏感度,重复购买意愿,1-5 ordinal,OLS with interaction,交互项系数,成对完整,缺失超过2题者排除,残差与共线性,交互项单独报告,独立复核,分性别子样本,exploratory,scripts/analysis_q2.py,交互检验功效不足

@@ -83,3 +83,16 @@
 - 本轮没有把外部执行端对历史测试包或来源哈希的误读作为缺陷：最小安装包不带源码测试，源哈希只针对原文副本，适配文件使用安装哈希。两者均已在文档明确。
 - DSH 经已有 Magpie profile 完成隔离静态审计，主控自跑 `validate_review.py`，输入快照保持不变。复现并修复旧 questionnaire 许可的 CRLF/LF 源哈希差异（增加固定 LF 和回归测试），移除其“仅参考”重复分类。早期 stdin/参数失败日志保留，不计为成功审计；审计针对中间快照，最终小改由主控回归核验。
 - D 盘主副本及 CodeBuddy Junction 均核对 86 个文件且无错误；从安装副本执行 `init`、`status` 成功，后者显示 13 阶段。文件校验不等于所有客户端原生加载，安装器仍报告 `agent_runtime_verified: false`。
+
+## 评审整改与高频入口验证（2026-11-07）
+
+本轮针对 `skill-review-suggestions.md` 的 P0/P1/P2 项做本地实现与回归，未把评审建议本身当作通过证据。
+
+- Windows / Python 3.12.3：`python -X utf8 -m pytest tests -q` 得到 **100 通过、1 跳过**（跳过项为当前环境不支持的符号链接回归）。新增测试覆盖证据覆盖拒绝与 `--force`、`evidence list` 漂移、规则 60 天时效、模板复制、Likert/反向题/多选组 schema、统计与样本量公式、示例项目门禁、advisor 本地扫描与 grill 输出。
+- 同一版本按 `examples/sample-project/RUNBOOK.md` 实际执行 13 条证据绑定与 5 个阶段复核，`gate design` 返回 `PASS_MECHANICAL_ONLY`（退出码 0）。离线安装器 `--mode copy` 安装后 `--verify` 通过，manifest 记录 **113 个文件**且无哈希错误；`agent_runtime_verified` 仍为 false。
+- 示例项目：50 行模拟数据通过 `survey_audit.py` 得到 `READY_FOR_REVIEW`；从 `registration` 到 `design` 逐阶段绑定并由测试复核者记录后，`gate design` 返回 `PASS_MECHANICAL_ONLY`。这证明结构可跑，不证明研究有效，模拟数据不得参赛。
+- 统计模块：对已知小样本核对 t 临界值、单样本 t、Welch t、卡方统计量、Fisher 精确检验、Cronbach α、OLS 精确直线与 Logit 收敛；样本量公式核对 385（p=0.5, margin=0.05）与脱落率上浮。未与 R/Stata 做全量数值对照，复杂设计仍不支持。
+- 模板哈希：`templates/` 与 `examples/` 的 30 个 CRLF 文本统一为 LF，并重新计算示例 `design-manifest.json`；新增测试禁止模板/示例文本出现 CRLF。Git 历史中的旧提交仍可能保留旧换行，需以当前 checkout 为准。
+- 快速入口：`advisor.py find` 扫描仓库、用户级技能目录并去重；`grill` 按 topic/design/analysis/report/defense 生成问题与建议，`--write` 只新建 `plans/grill-*.md`。两者都不改变项目状态，也不把本地候选称为已安装或已联网搜索。
+- README 命令细节移入 `docs/COMMANDS.md`；新增 `docs/SURVEY_EXPORTS.md` 对照问卷星、腾讯问卷与 Credamo 的常见导出形态。文档中的平台行为是对常见导出的工程归纳，未逐版本截图验证。
+- 未完成或未验证：LICENSE 仍待所有者决定；未与真实赛事通知重新核验 2026-11-07 之后的规则；未跑完整 13 阶段真实项目；未证明所有客户端原生发现三个子技能。

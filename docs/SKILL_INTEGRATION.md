@@ -2,6 +2,18 @@
 
 保留主技能和原有 13 阶段；压力测试研究决策、发现缺少的外部能力均按需使用，不要求每次研究都先访谈或联网。
 
+## 高频入口（2026-11-07）
+
+为降低使用门槛，新增 `scripts/advisor.py`：
+
+| 命令 | 用途 | 边界 |
+| --- | --- | --- |
+| `advisor.py grill --stage <topic/design/analysis/report/defense> --quick` | 生成当前可回答的 3 个问题、建议答案与结束条件 | 只读；不修改项目状态；答案是建议不是用户决定 |
+| `advisor.py grill --stage <stage> --project <dir> --write` | 把本轮问题写入 `plans/grill-<stage>-<timestamp>.md` | 日志不是阶段证据，也不能替代独立复核 |
+| `advisor.py find --need "<具体任务>"` | 扫描本地技能 `SKILL.md`，打印 `npx skills find` 命令与 skills.sh 链接 | 只读、本地；不联网、不安装、不把候选称为已可用 |
+
+默认触发点写进主技能与三个适配入口：选题打分前、设计冻结前、分析合同冻结前、报告/答辩定稿前先跑一次 3 问 grill；用户问“有没有工具/skill 能做 X”或当前产物缺少能力时先跑 find。这样提高触发频率，但不把每次研究都变成全流程访谈或强制联网。
+
 ## 上游原文与研究适配
 
 | 上游原文 | 本项目路由 | 适配点 |
@@ -16,6 +28,7 @@
 
 - clone 后，支持 `.agents/skills` 项目目录的客户端可在新会话发现子技能；其他客户端以自身配置为准。
 - `.agents/skills/` 内的 [grill-me](../.agents/skills/grill-me/SKILL.md)、[grilling](../.agents/skills/grilling/SKILL.md)、[find-skills](../.agents/skills/find-skills/SKILL.md) 是自含的研究适配入口；即使客户端跳过主技能直接加载，也包含项目范围、无原生工具和离线降级的行为。
+- 三个入口的 description 已扩大到“冻结前默认动作”和“缺能力时先扫描”，不再只等用户说出 skill 名称或 “grill me”。适配入口是行为层，不改上游原文；上游快照仍按 `docs/upstreams.lock.json` 校验。
 - 主技能读取研究指南或适配入口执行；`references/upstream-skills/` 仅供来源对照，不作为另一套运行指令覆盖适配约束。
 - 离线安装器保留适配入口、三份原文与两份许可，均为必需文件并纳入安装哈希；不额外注册全局子技能。
 - Skills CLI 默认发现根主技能，不表示子技能也独立安装。需查看主包实际文件；缺失时用完整 ZIP/离线安装器，或单独安装上游。

@@ -4,6 +4,8 @@
   "display_name": "第十七届全国大学生市场调查与分析大赛（正大杯）",
   "verification_status": "secondary-institutional-notices-only; verify national organizer notice and the user's own school/region before action",
   "last_checked": "2026-10-17",
+  "max_age_days": 60,
+  "verification_enforced_by": "scripts/workflow.py gate (registration/rules_verification)",
   "organizer_website": "http://www.china-cssc.org/",
   "notes": "本文件仅保存院校公告可核对的赛事基线，不包含学校报名代码、个人报名结果或最终实践赛提交格式。年份变化后不可自动沿用。",
   "undergraduate_baseline": {

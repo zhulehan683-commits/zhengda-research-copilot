@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import stat
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,6 +14,13 @@ from pathlib import Path
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def enable_utf8() -> None:
+    """Make Chinese diagnostics readable in legacy Windows code pages."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
 
 
 def project_root(value: str) -> Path:

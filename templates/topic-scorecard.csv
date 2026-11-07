@@ -1,1 +1,1 @@
-topic_id,title,target_population,problem_evidence,public_data_available,sample_accessibility,actionability,team_fit,ethics_risk,time_risk,total_score,decision,reason_not_selected
+topic_id,title,target_population,problem_evidence,topic_density,topic_density_notes,public_data_available,sample_accessibility,actionability,team_fit,ethics_risk,time_risk,total_score,decision,reason_not_selected

@@ -1,10 +1,32 @@
 # 统计分析与复现
 
+## 本 Skill 的代码边界
+
+本技能自带可离线运行的 `scripts/stats_basic.py` 与 `scripts/power_calc.py`，覆盖：
+
+- 描述统计、均值置信区间、单/双样本与配对 t 检验；
+- 卡方独立性检验、Fisher 精确检验、频数表；
+- Cronbach's α、简单 OLS、二元 Logit（IRLS）；
+- 比例/均值/卡方的样本量与功效近似计算。
+
+**不覆盖**：复杂抽样权重与设计效应、SEM/CFA、多层模型、潜类别、机器学习、因果识别、缺失数据多重插补。需要这些方法时，使用用户自备的 R、Stata、SPSS、AMOS、Mplus 或 Python 第三方环境；本技能只提供分析合同、变量字典、结果登记与复现门禁。不要因为脚本能跑就声称方法前提已经满足。
+
 ## 数据合同
 
 问卷分析先读 `references/measurement-and-inference.md`；填写 `templates/analysis-contract.csv`，对真实 CSV 按变量合同执行 `scripts/survey_audit.py`。预检不等同信效度、抽样代表性或模型诊断通过。
 
 保留源数据只读副本、SHA-256、变量字典、问卷版本、清洗脚本、执行命令和日志。分析仅使用脱敏数据。建立`变量 → 测量尺度 → 缺失逻辑 → 研究问题 → 分析方法`映射。
+
+最小闭环示例（60 人、5 个 Likert 题、一个 0/1 结果）：
+
+```sh
+python -X utf8 "<SKILL_ROOT>/scripts/stats_basic.py" alpha --data data/clean.csv --columns q1,q2,q3,q4,q5
+python -X utf8 "<SKILL_ROOT>/scripts/stats_basic.py" describe --data data/clean.csv --columns q1,q2,q3,q4,q5
+python -X utf8 "<SKILL_ROOT>/scripts/stats_basic.py" logit --data data/clean.csv --y purchase --x q1,q2,q3
+python -X utf8 "<SKILL_ROOT>/scripts/power_calc.py" proportion --p 0.5 --margin 0.05 --dropout 0.1
+```
+
+脚本只做成对完整案例分析，不插补、不加权、不自动反向计分；必须在 `cleaning-report.md` 记录这些决定。
 
 ## 方法选择
 
